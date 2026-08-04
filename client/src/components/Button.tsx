@@ -1,4 +1,5 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
+import { useMagnetic } from "../hooks/useMagnetic";
 
 const base =
   "inline-flex min-h-11 items-center justify-center gap-2 px-6 py-3 rounded-sm font-hud font-medium text-tag uppercase tracking-[0.06em] border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current";
@@ -13,16 +14,20 @@ type Variant = keyof typeof variants;
 
 export function Button({
   variant = "primary",
+  magnetic = false,
   className = "",
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) {
-  return <button className={`${base} ${variants[variant]} ${className}`} {...props} />;
+}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; magnetic?: boolean }) {
+  const ref = useMagnetic<HTMLButtonElement>(magnetic);
+  return <button ref={ref} className={`${base} ${variants[variant]} ${className}`} {...props} />;
 }
 
 export function LinkButton({
   variant = "primary",
+  magnetic = false,
   className = "",
   ...props
-}: AnchorHTMLAttributes<HTMLAnchorElement> & { variant?: Variant }) {
-  return <a className={`${base} ${variants[variant]} ${className}`} {...props} />;
+}: AnchorHTMLAttributes<HTMLAnchorElement> & { variant?: Variant; magnetic?: boolean }) {
+  const ref = useMagnetic<HTMLAnchorElement>(magnetic);
+  return <a ref={ref} className={`${base} ${variants[variant]} ${className}`} {...props} />;
 }

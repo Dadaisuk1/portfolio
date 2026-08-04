@@ -185,20 +185,27 @@ Photographic grain and paper grain are physically different materials — don't 
 - Fixed bottom-right (mirrors any future bottom-left floating trigger, e.g. a contact launcher), circular, `bg-ink`/`text-paper`, appears via `ScrollTrigger` boundary at the hero's bottom edge (`onEnter`/`onLeaveBack`).
 - Also hides itself immediately in its own `onClick`, rather than relying solely on the ScrollTrigger callback catching up with an animated scroll — that lag is real and was verified live, not assumed.
 
+**Magnetic elements** (`hooks/useMagnetic.ts`)
+- Cursor-follow pull via `gsap.quickTo` on `x`/`y`, relative offset from element center clamped to `±maxOffset` and scaled by a `0.4` pull-strength factor, eased back to `(0, 0)` on `mouseleave`.
+- No-ops under `prefers-reduced-motion` **and** under `(hover: none)` (touch-only devices have no persistent cursor to follow) — both checked inside the effect, not at the call site.
+- Ship as an opt-in `magnetic` prop on `Button`/`LinkButton` (default `12px` offset) rather than wrapping call sites; applied to the hero and Footer CTAs. Certifications cards use the same hook directly at a smaller `6px` offset (subtle pull, not a full button-style magnet) — see `sections/Certifications.tsx`'s `CredentialCard` for the pattern when a hook needs to run per-item inside a `.map()` (extract a sub-component, since hooks can't be called inside a loop callback).
+- Note: GSAP's `quickTo` on `x`/`y` writes to the independent CSS `translate` property, not the `transform` shorthand — check `getComputedStyle(el).translate` (or the element's `style.cssText`), not `.transform`, when inspecting or debugging this in devtools.
+
+**Hover-only underlines**
+- Links get `hover:underline` (no base `underline`), `underline-offset-2`. Group-scoped titles (e.g. Certifications card names) use `group` on the container + `group-hover:underline` on the title. Applies to the CIT link in Education and the Certifications card titles.
+
+**Entrance / stagger reveals**
+- `hooks/useTextReveal.ts`: staggers the ref's direct children in on mount (not scroll-triggered) — used for the hero headline, pre-split into per-word `<span>`s. `opacity 0→1`, `y 16→0`, `blur(6px)→blur(0)`, 0.06s stagger.
+- `hooks/useStaggerReveal.ts`: scroll-triggered version of the same motif for a *group* of items (no y-shift, since items sit in a grid rather than sliding into place like a print). Takes an optional `childSelector` to target nested items instead of direct children — used on the Tech Stack icon grid via a `data-reveal-item` attribute on each icon row, since the grid's direct children are the column wrappers, not the icons themselves.
+
 **Reduced-motion convention**
-- Every new animated element checks `window.matchMedia("(prefers-reduced-motion: reduce)").matches` and either no-ops or jumps to the end state — never partially animates. See `GrainFlicker`, `LoadingScreen`, `useDevelopReveal`, and the Lenis setup above for the pattern to copy.
+- Every new animated element checks `window.matchMedia("(prefers-reduced-motion: reduce)").matches` and either no-ops or jumps to the end state — never partially animates. See `GrainFlicker`, `LoadingScreen`, `useDevelopReveal`, and the hooks above for the pattern to copy.
 
 ---
 
-## 09. Planned — Interaction Batch (Phase B/C)
+## 09. Planned — Interaction Batch (Phase C)
 
-Phase A (scroll engine, CIT/Tech-Stack fixes, download spinner, button contrast) is shipped — see `08` above. The rest of the animated-UI batch is still ahead, split into two more checkpointed phases.
-
-**Phase B — motion layer**
-- Magnetic buttons: cursor-follow transform within a bounded radius, reset on mouseleave, no-op under reduced motion. Ship as an opt-in `magnetic` prop on `Button`/`LinkButton` rather than wrapping call sites. Apply to hero CTAs and Footer CTAs.
-- Certifications cards: same magnetic hook at a smaller max-offset (subtle pull, not a full button-style magnet) + `group-hover:underline` on the card title.
-- Hero text animation: split `profile.role` into words, stagger them in on mount (translateY + blur/opacity, matching `useDevelopReveal`'s "developing print" motif rather than a generic fade). Reduced motion falls back to static text.
-- Tech Stack logo-cloud reveal: the icons already in `Skills.tsx` get a scroll-triggered staggered blur-to-sharp reveal (same `ScrollTrigger` pattern as `useDevelopReveal`, scoped to the icon grid specifically) — no new section, just motion added to what exists.
+Phase A (scroll engine, CIT/Tech-Stack fixes, download spinner, button contrast) and Phase B (magnetic elements, hover-underlines, entrance/stagger reveals) are both shipped — see `08` above. Phase C is what's left.
 
 **Phase C — bigger additions**
 - Image skeletons: new `ImageWithSkeleton` component — pulsing placeholder matching target dimensions, cross-fades to the real `<img>` on load. Applies to the CIT crest (used in both Education and Certifications) — the only real network-latency content on an otherwise static-data page.
