@@ -98,6 +98,8 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     opacity: 0.05;
     mix-blend-mode: overlay;
+    background-size: 200px 200px;
+    animation: grain-fall 6s linear infinite;
   }
 
   /* Paper grain — for menu / light surfaces */
@@ -134,6 +136,33 @@
   }
 }
 
+@keyframes grain-shift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 200px 200px;
+  }
+}
+
+@keyframes scanlines {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 10px;
+  }
+}
+
+@keyframes grain-fall {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 400px;
+  }
+}
+
 /* Registers --iris-r as an interpolable length so the shutter's aperture
    mask can transition smoothly instead of jumping between values. */
 @property --iris-r {
@@ -141,4 +170,3 @@
   inherits: false;
   initial-value: 0px;
 }
-
