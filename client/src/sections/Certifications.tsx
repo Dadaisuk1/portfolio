@@ -45,7 +45,7 @@ export function Certifications() {
                 >
                   {cert.name}
                 </p>
-                <p className="font-hud text-tag uppercase tracking-[0.08em] text-ash">
+                <p className="font-hud text-tag uppercase tracking-[0.08em] text-ash-deep">
                   {cert.type} · {cert.date}
                 </p>
               </div>

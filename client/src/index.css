@@ -10,6 +10,7 @@
   --color-orange-muted: #753229;
   --color-teal: #175669;
   --color-ash: #848d94;
+  --color-ash-deep: #5c6570; /* ash text on paper — --color-ash is 3.02:1, fails WCAG AA at small sizes */
 
   /* — Type — */
   --font-display: "Fraunces", Georgia, serif;
