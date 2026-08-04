@@ -7,6 +7,7 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/ddjl/",
   github: "https://github.com/Dadaisuk1",
   resumeUrl: "/resume.pdf",
+  bio: "4th-year IT student turning Figma files into production React — full-stack across React, Node.js, and Django, AWS-certified, and comfortable owning a project end to end.",
 };
 
 export const techStack = [

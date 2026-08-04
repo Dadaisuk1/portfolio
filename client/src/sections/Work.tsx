@@ -33,7 +33,7 @@ export function Work() {
               <h3 className="font-display text-h3 text-ink" style={{ fontWeight: 580 }}>
                 {project.name}
               </h3>
-              <p className="text-sm text-ash">{project.tagline}</p>
+              <p className="text-sm text-ash-deep">{project.tagline}</p>
               <p className="mt-2 font-hud text-tag uppercase tracking-[0.08em] text-teal">
                 {project.meta}
               </p>

@@ -16,8 +16,8 @@ export function Education() {
             Education
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+        <div className="flex flex-col gap-8">
+          <div>
             <h3 className="mb-4 font-hud text-tag uppercase tracking-[0.08em] text-ash">
               Degree
             </h3>
@@ -31,17 +31,20 @@ export function Education() {
             <p className="mt-1 font-hud text-tag text-ash">{education.period}</p>
           </div>
 
-          <div>
-            <h3 className="mb-4 font-hud text-tag uppercase tracking-[0.08em] text-ash">
+          <div className="flex flex-wrap items-center gap-3 border-t border-ash/15 pt-6">
+            <span className="font-hud text-tag uppercase tracking-[0.08em] text-ash">
               Languages
-            </h3>
-            <ul className="flex flex-col gap-2">
+            </span>
+            <div className="flex flex-wrap gap-2">
               {languages.map((lang) => (
-                <li key={lang} className="font-body text-body text-paper/85">
+                <span
+                  key={lang}
+                  className="rounded-full border border-ash/30 px-3 py-1 font-hud text-tag uppercase tracking-[0.08em] text-paper/80"
+                >
                   {lang}
-                </li>
+                </span>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
       </div>

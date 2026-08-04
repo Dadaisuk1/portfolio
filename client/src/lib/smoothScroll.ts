@@ -15,3 +15,12 @@ export function scrollToTarget(target: string | Element) {
   const el = typeof target === "string" ? document.querySelector(target) : target;
   el?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
+
+export function scrollToTop() {
+  if (smoother) {
+    smoother.scrollTo(0, true);
+    return;
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}

@@ -129,7 +129,7 @@ export function Nav({
               href={social.href}
               target={social.href.startsWith("mailto:") ? undefined : "_blank"}
               rel={social.href.startsWith("mailto:") ? undefined : "noreferrer"}
-              className="font-hud text-tag uppercase tracking-[0.08em] text-ash transition-colors hover:text-orange-deep"
+              className="font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep"
             >
               {social.label}
             </a>

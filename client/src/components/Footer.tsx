@@ -22,6 +22,8 @@ export function Footer() {
           Let's build something together.
         </h2>
 
+        <p className="max-w-xl font-body text-body-lg text-ink/70">{profile.bio}</p>
+
         <div className="flex flex-wrap gap-4">
           <LinkButton href={`mailto:${profile.email}`} variant="primary">
             Email me
