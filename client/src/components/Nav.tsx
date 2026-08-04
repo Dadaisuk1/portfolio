@@ -3,19 +3,11 @@ import { Link } from "react-router-dom";
 import { profile } from "../data/resume";
 import { RecDot } from "./Hud";
 import { LinkButton } from "./Button";
+import { Spinner } from "./Spinner";
 import { scrollToTarget } from "../lib/smoothScroll";
 import { useTextReveal } from "../hooks/useTextReveal";
 
 const DOWNLOAD_FEEDBACK_MS = 700;
-
-function Spinner() {
-  return (
-    <svg className="h-4 w-4 shrink-0 animate-spin" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.25" />
-      <path d="M14.5 8a6.5 6.5 0 0 0-6.5-6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 const items = [
   { frame: "01", label: "Featured Work", href: "#work" },

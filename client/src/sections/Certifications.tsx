@@ -3,6 +3,7 @@ import { useDevelopReveal } from "../hooks/useDevelopReveal";
 import { useMagnetic } from "../hooks/useMagnetic";
 import { Aws } from "../components/icons/Aws";
 import { Ibm } from "../components/icons/Ibm";
+import { ImageWithSkeleton } from "../components/ImageWithSkeleton";
 
 const CARD_MAGNETIC_OFFSET = 6;
 
@@ -10,7 +11,13 @@ function CredentialIcon({ icon }: { icon: Certification["icon"] }) {
   if (icon === "aws") return <Aws className="h-7 w-auto text-ink" aria-hidden="true" />;
   if (icon === "ibm") return <Ibm className="h-6 w-auto" aria-hidden="true" />;
   return (
-    <img src="/assets/cit.png" alt="" className="h-8 w-auto object-contain object-left" />
+    <ImageWithSkeleton
+      src="/assets/cit.png"
+      alt=""
+      width={33}
+      height={32}
+      className="object-left"
+    />
   );
 }
 

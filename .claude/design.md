@@ -206,11 +206,15 @@ Photographic grain and paper grain are physically different materials — don't 
 
 ---
 
-## 09. Planned — Interaction Batch (Phase C)
+## 09. Interaction Batch (Phase C) — shipped
 
-Phase A (scroll engine, CIT/Tech-Stack fixes, download spinner, button contrast) and Phase B (magnetic elements, hover-underlines, entrance/stagger reveals, credential card links) are all shipped — see `08` above. What's left:
+Phase A (scroll engine, CIT/Tech-Stack fixes, download spinner, button contrast), Phase B (magnetic elements, hover-underlines, entrance/stagger reveals, credential card links), and Phase C (below) are all shipped.
 
-- Image skeletons: new `ImageWithSkeleton` component — pulsing placeholder matching target dimensions, cross-fades to the real `<img>` on load. Applies to the CIT crest (used in both Education and Certifications) — the only real network-latency content on an otherwise static-data page.
-- Contact modal: floating trigger bottom-left (mirrors back-to-top's bottom-right), opens a chat-panel-styled form (name/email/message) in the site's existing HUD/paper-grain language. Submits via web3forms (`fetch` to their API, access key from `VITE_WEB3FORMS_ACCESS_KEY`). Supplements the Footer's existing `mailto:` button rather than replacing it.
+**Image skeletons** (`components/ImageWithSkeleton.tsx`)
+- Pulsing placeholder (`bg-ash/20 animate-pulse`) sized to explicit `width`/`height` props, cross-fades via opacity transition to the real `<img>` on its `onLoad` event. Width/height are also set as real HTML attributes for CLS prevention. Applied to the CIT crest in both Education and Certifications — the only real network-latency content on an otherwise static-data page.
 
-**Blocked on user input**: a web3forms access key.
+**Contact modal** (`components/ContactModal.tsx`)
+- Floating trigger bottom-left (mirrors back-to-top's bottom-right, same `z-40`), opens a chat-panel-styled form (name/email/message) in the site's HUD/paper-grain visual language. Supplements the Footer's `mailto:` button rather than replacing it.
+- Submits via `fetch` to web3forms' API, access key read from `VITE_WEB3FORMS_ACCESS_KEY` (see `client/.env.example`). With no key configured, submission fails gracefully with an inline message pointing to the real email instead — the UI doesn't require the key to ship.
+- **Outside-click-to-close gotcha**: the `mousedown` listener that closes the panel on an outside click must explicitly exclude the trigger button itself (a `triggerRef`, checked alongside `panelRef`), not just the panel. `mousedown` fires before the button's own `onClick` toggle — without the exclusion, clicking the trigger to close it fires "outside click → close" first, then the button's own toggle immediately reopens it, so the panel never closes via its own button.
+- **`paper-grain` + `fixed` conflict**: `.paper-grain` (and `.grain`) set `position: relative` and live in `@layer utilities` — the same layer as Tailwind's own utilities. Combined on one element, whichever rule comes later in the compiled stylesheet wins by source order, not by the `fixed`/`relative` token's "specialness" — in practice `.paper-grain` won and silently downgraded `position: fixed` to `relative`. Every prior use of `paper-grain` in this codebase paired it with `relative` anyway, so this never surfaced before the contact modal tried to pair it with `fixed`. Don't combine `paper-grain`/`grain` with `fixed` (or `absolute`) on the same element — apply the grain texture to a non-positioned descendant instead if both are needed.
