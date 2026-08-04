@@ -15,10 +15,13 @@ function CredentialIcon({ icon }: { icon: Certification["icon"] }) {
 }
 
 function CredentialCard({ cert }: { cert: Certification }) {
-  const ref = useMagnetic<HTMLDivElement>(true, CARD_MAGNETIC_OFFSET);
+  const ref = useMagnetic<HTMLAnchorElement>(true, CARD_MAGNETIC_OFFSET);
   return (
-    <div
+    <a
       ref={ref}
+      href={cert.url}
+      target="_blank"
+      rel="noreferrer"
       className="group flex flex-col gap-4 rounded-md border border-ink/15 p-5 transition-colors hover:border-ink/30"
     >
       <div className="flex h-8 items-center">
@@ -29,13 +32,13 @@ function CredentialCard({ cert }: { cert: Certification }) {
           className="font-body leading-snug text-ink underline-offset-2 group-hover:underline"
           style={{ fontWeight: 580 }}
         >
-          {cert.name}
+          {cert.name} <span aria-hidden="true">↗</span>
         </p>
         <p className="font-hud text-tag uppercase tracking-[0.08em] text-ash-deep">
           {cert.type} · {cert.date}
         </p>
       </div>
-    </div>
+    </a>
   );
 }
 

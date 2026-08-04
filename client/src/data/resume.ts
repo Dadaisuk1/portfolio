@@ -117,24 +117,28 @@ export const certifications = [
     type: "Training Badge",
     date: "Dec 2025",
     icon: "aws",
+    url: "https://www.credly.com/badges/0da04100-740d-41f0-95c1-9c688737edde/public_url",
   },
   {
     name: "AWS Academy Graduate — Cloud Foundations",
     type: "Training Badge",
     date: "Oct 2025",
     icon: "aws",
+    url: "https://www.credly.com/badges/42f391ac-3ece-45d5-ac7d-42169faecb69/public_url",
   },
   {
     name: "IBM — Lifelong Professional Skills",
     type: "Certificate",
     date: "Jul 2026",
     icon: "ibm",
+    url: "https://www.credly.com/badges/b5b5da2d-0ce8-4f17-a336-1182e00b3533/public_url",
   },
   {
     name: "CIT-U OJT Readiness Program",
     type: "Certificate",
     date: "Jul 2026",
     icon: "cit",
+    url: "https://www.credential.net/c394a11d-dae7-4da5-a5ae-7563557daf18#acc.mD0kuQo6",
   },
 ] as const;
 

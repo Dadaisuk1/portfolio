@@ -201,15 +201,16 @@ Photographic grain and paper grain are physically different materials — don't 
 **Reduced-motion convention**
 - Every new animated element checks `window.matchMedia("(prefers-reduced-motion: reduce)").matches` and either no-ops or jumps to the end state — never partially animates. See `GrainFlicker`, `LoadingScreen`, `useDevelopReveal`, and the hooks above for the pattern to copy.
 
+**Credential card links**
+- Each `CredentialCard` is now the `<a>` itself (not a `<div>` with a link inside) — `useMagnetic<HTMLAnchorElement>` on the whole card, `target="_blank" rel="noreferrer"`, real verification URLs on `certifications[].url` in `resume.ts` (2 Credly, 1 Credly, 1 Credential.net — mapping confirmed by the site owner, not guessed). Title gets a trailing `↗` inside the same underlined `<p>` so "Name ↗" reads as one clickable unit.
+
 ---
 
 ## 09. Planned — Interaction Batch (Phase C)
 
-Phase A (scroll engine, CIT/Tech-Stack fixes, download spinner, button contrast) and Phase B (magnetic elements, hover-underlines, entrance/stagger reveals) are both shipped — see `08` above. Phase C is what's left.
+Phase A (scroll engine, CIT/Tech-Stack fixes, download spinner, button contrast) and Phase B (magnetic elements, hover-underlines, entrance/stagger reveals, credential card links) are all shipped — see `08` above. What's left:
 
-**Phase C — bigger additions**
 - Image skeletons: new `ImageWithSkeleton` component — pulsing placeholder matching target dimensions, cross-fades to the real `<img>` on load. Applies to the CIT crest (used in both Education and Certifications) — the only real network-latency content on an otherwise static-data page.
 - Contact modal: floating trigger bottom-left (mirrors back-to-top's bottom-right), opens a chat-panel-styled form (name/email/message) in the site's existing HUD/paper-grain language. Submits via web3forms (`fetch` to their API, access key from `VITE_WEB3FORMS_ACCESS_KEY`). Supplements the Footer's existing `mailto:` button rather than replacing it.
-- Credential card links: each Certifications card links out to its verification page once the URL↔certification mapping is confirmed.
 
-**Blocked on user input**: which of the 4 credential URLs maps to which certification, and a web3forms access key.
+**Blocked on user input**: a web3forms access key.
