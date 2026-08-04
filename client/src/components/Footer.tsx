@@ -25,13 +25,25 @@ export function Footer() {
         <p className="max-w-xl font-body text-body-lg text-ink/70">{profile.bio}</p>
 
         <div className="flex flex-wrap gap-4">
-          <LinkButton href={`mailto:${profile.email}`} variant="primary">
+          <LinkButton href={`mailto:${profile.email}`} variant="primary" magnetic>
             Email me
           </LinkButton>
-          <LinkButton href={profile.linkedin} variant="ghost-dark" target="_blank" rel="noreferrer">
+          <LinkButton
+            href={profile.linkedin}
+            variant="ghost-dark"
+            magnetic
+            target="_blank"
+            rel="noreferrer"
+          >
             LinkedIn
           </LinkButton>
-          <LinkButton href={profile.github} variant="ghost-dark" target="_blank" rel="noreferrer">
+          <LinkButton
+            href={profile.github}
+            variant="ghost-dark"
+            magnetic
+            target="_blank"
+            rel="noreferrer"
+          >
             GitHub
           </LinkButton>
         </div>

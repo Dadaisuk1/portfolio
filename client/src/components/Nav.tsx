@@ -4,6 +4,7 @@ import { profile } from "../data/resume";
 import { RecDot } from "./Hud";
 import { LinkButton } from "./Button";
 import { scrollToTarget } from "../lib/smoothScroll";
+import { useTextReveal } from "../hooks/useTextReveal";
 
 const DOWNLOAD_FEEDBACK_MS = 700;
 
@@ -30,6 +31,8 @@ const socials = [
   { label: "Email", href: `mailto:${profile.email}` },
 ];
 
+const roleWords = profile.role.split(" ");
+
 export function Nav({
   onFrameHover,
   onCollapse,
@@ -38,6 +41,7 @@ export function Nav({
   onCollapse?: () => void;
 }) {
   const [isDownloading, setIsDownloading] = useState(false);
+  const headlineRef = useTextReveal<HTMLHeadingElement>();
 
   return (
     <div className="paper-grain relative flex min-w-0 flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink split:min-h-screen split:flex-1 split:px-14">
@@ -60,10 +64,19 @@ export function Nav({
           </span>
         </div>
         <h1
+          ref={headlineRef}
           className="font-display italic text-hero text-ink"
           style={{ fontWeight: 340 }}
         >
-          {profile.role}
+          {roleWords.map((word, i) => (
+            <span
+              key={word + i}
+              className="inline-block"
+              style={{ marginRight: i < roleWords.length - 1 ? "0.25em" : 0 }}
+            >
+              {word}
+            </span>
+          ))}
         </h1>
         <p className="mt-6 max-w-md font-body text-body-lg text-ink/70">
           {profile.name} — building interfaces end-to-end, from Figma to
@@ -122,6 +135,7 @@ export function Nav({
         <LinkButton
           href="#work"
           variant="primary"
+          magnetic
           onClick={(e) => {
             e.preventDefault();
             scrollToTarget("#work");
@@ -132,6 +146,7 @@ export function Nav({
         <LinkButton
           href={profile.resumeUrl}
           variant="ghost-dark"
+          magnetic
           download
           aria-busy={isDownloading}
           onClick={() => {

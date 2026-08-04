@@ -1,9 +1,11 @@
 import { currentlyExpanding, techStack } from "../data/resume";
 import { techIcons } from "../components/icons/techIconMap";
 import { useDevelopReveal } from "../hooks/useDevelopReveal";
+import { useStaggerReveal } from "../hooks/useStaggerReveal";
 
 export function Skills() {
   const ref = useDevelopReveal<HTMLElement>();
+  const gridRef = useStaggerReveal<HTMLDivElement>("[data-reveal-item]");
   return (
     <section ref={ref} id="skills" className="bg-ink px-6 py-16 text-paper sm:px-14 sm:py-24">
       <div className="mx-auto flex max-w-[1400px] flex-col gap-8">
@@ -21,7 +23,7 @@ export function Skills() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+        <div ref={gridRef} className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
           {techStack.map((group) => (
             <div key={group.label} className="flex flex-col gap-4">
               <span className="font-hud text-tag font-medium uppercase tracking-[0.08em] text-orange">
@@ -31,7 +33,7 @@ export function Skills() {
                 {group.items.map((item) => {
                   const Icon = techIcons[item.icon];
                   return (
-                    <div key={item.name} className="flex items-center gap-2.5">
+                    <div key={item.name} data-reveal-item className="flex items-center gap-2.5">
                       <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
                       <span
                         className="font-display text-body text-paper"

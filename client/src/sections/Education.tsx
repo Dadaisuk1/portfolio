@@ -30,7 +30,7 @@ export function Education() {
                 href={education.schoolUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="font-body text-body text-paper/70 underline decoration-ash/40 underline-offset-2 transition-colors hover:text-paper hover:decoration-orange"
+                className="font-body text-body text-paper/70 underline-offset-2 transition-colors hover:text-paper hover:underline hover:decoration-orange"
               >
                 {education.school}
               </a>
