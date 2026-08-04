@@ -27,7 +27,7 @@ export function Nav({
   onCollapse?: () => void;
 }) {
   return (
-    <div className="paper-grain relative flex flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink split:min-h-screen split:px-14">
+    <div className="paper-grain relative flex min-w-0 flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink split:min-h-screen split:flex-1 split:px-14">
       <button
         type="button"
         onClick={onCollapse}
