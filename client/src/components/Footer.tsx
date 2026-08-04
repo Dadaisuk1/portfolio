@@ -2,7 +2,6 @@ import { profile } from "../data/resume";
 import { LinkButton } from "./Button";
 import { RecDot } from "./Hud";
 import { useDevelopReveal } from "../hooks/useDevelopReveal";
-import { WaveDotField } from "./WaveDotField";
 
 export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
   const ref = useDevelopReveal<HTMLElement>();
@@ -11,7 +10,6 @@ export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
       ref={ref}
       className="paper-grain relative isolate border-t border-ink/10 bg-paper px-6 py-16 text-ink sm:px-14 sm:py-24"
     >
-      <WaveDotField tone="light" spacing={16} alphaScale={0.6} className="-z-10" />
       <div className="mx-auto flex max-w-[1400px] flex-col gap-10">
         <div className="flex items-center gap-4">
           <RecDot tone="light" />

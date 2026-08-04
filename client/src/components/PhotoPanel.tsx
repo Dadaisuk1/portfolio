@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
 import { CornerBrackets, FrameCounter, RecDot, Timestamp } from "./Hud";
 import { GrainFlicker } from "./GrainFlicker";
-import { type CursorPoint } from "./WaveDotField";
-import { DotGridBackground } from "./DotGridBackground";
+import { WaveField } from "./WaveField";
+import { DotGridBackground, type CursorPoint } from "./DotGridBackground";
 
 const FALLBACK_SRC = "/assets/cit.png";
 
@@ -75,13 +75,19 @@ export function PhotoPanel({
         ["--my" as any]: "-999px",
       }}
     >
-      <div className="absolute inset-0 bg-ink-blue" />
-      <DotGridBackground cursorRef={cursorRef} />
+      <div className="absolute inset-0 bg-ink" />
+      <DotGridBackground cursorRef={cursorRef} spacing={16} dotSize={2} />
+      {/* wave-signal texture - the site's recurring halftone asset, placed
+          full-bleed and screen-blended straight onto the dot field below so
+          the panel ties into the rest of the site's texture language instead
+          of standing apart in plain white. */}
+      <WaveField tone="dark" className="opacity-5" />
+
       {/* spotlight image layer - revealed only inside the radial mask at the cursor/touch point.
           The mask lives on this full-bleed wrapper (so --mx/--my line up with the cursor
           regardless of panel width); the photo itself is pinned to a height-bound square
           inside it so it's never upscaled past its native ~600px resolution, letterboxed
-          by the ink-blue base layer instead of stretching edge-to-edge and turning to mush. */}
+          by the ink base layer instead of stretching edge-to-edge and turning to mush. */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -109,6 +115,32 @@ export function PhotoPanel({
         />
       </div>
       <GrainFlicker active={hovering} />
+
+      {/* lens vignette - permanent edge falloff, same optical signature as the
+          fisheye bulge in the dot field: reads as glass in front of the frame
+          rather than a flat color layer */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.62) 100%)",
+        }}
+      />
+
+      {/* viewfinder reticle - concentric rangefinder rings bowed by the same
+          fisheye curve as the dot field, so the "glass" reads consistent
+          across both the ambient grid and its frame lines */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <span
+          className="absolute inset-0 m-auto rounded-[46%] border border-paper/[0.07]"
+          style={{ width: "128%", height: "112%" }}
+        />
+        <span
+          className="absolute inset-0 m-auto rounded-[48%] border border-paper/[0.05]"
+          style={{ width: "94%", height: "82%" }}
+        />
+      </div>
 
       {/* soft light source that tracks the cursor/touch point - a warm glow
           spreading from a single point, echoing the same gradual falloff as
@@ -146,13 +178,28 @@ export function PhotoPanel({
       </div>
 
       {!collapsed && (
-        <span
-          className="absolute right-6 top-6 font-hud text-hud text-ash tracking-[0.04em] sm:right-8 sm:top-8"
+        <div
+          className="absolute right-6 top-6 flex flex-col items-end gap-1 sm:right-8 sm:top-8"
           aria-hidden="true"
         >
-          50MM · F/2.8
-        </span>
+          <span className="font-hud text-hud text-ash tracking-[0.04em]">
+            50MM · F/2.8
+          </span>
+          <span className="font-hud text-tag text-ash/50 tracking-[0.04em]">
+            1/125 · ISO 200
+          </span>
+        </div>
       )}
+
+      {/* vertical graphic label - fills the dead field down the left edge so
+          the frame reads as an instrument, not empty space around one photo */}
+      <span
+        className="pointer-events-none absolute left-3 top-1/2 hidden font-hud text-tag uppercase tracking-[0.3em] text-paper/[0.14] sm:left-4 sm:block"
+        style={{ writingMode: "vertical-rl", transform: "translateY(-50%) rotate(180deg)" }}
+        aria-hidden="true"
+      >
+        Manual Focus · Wide Open
+      </span>
 
       <CornerBrackets />
       <RecDot

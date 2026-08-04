@@ -1,7 +1,8 @@
 import { useEffect, useRef, type RefObject } from "react";
-import type { CursorPoint } from "./WaveDotField";
 
-const TEAL = "23, 86, 105"; // --color-teal, as an rgb() triplet for canvas fillStyle
+export type CursorPoint = { x: number; y: number; active: boolean };
+
+const PAPER = "245, 242, 234"; // --color-paper, as an rgb() triplet for canvas fillStyle
 
 type Dot = {
   bx: number;
@@ -17,16 +18,41 @@ function smoothstep(t: number) {
   return c * c * (3 - 2 * c);
 }
 
-function buildDots(width: number, height: number, spacing: number): Dot[] {
+/**
+ * Bulges the grid outward from its center, same way a wide lens magnifies
+ * whatever it's pointed at — radii closer in get pushed apart proportionally
+ * more than radii near the frame edge, so the mid-field spreads out while
+ * the border stays put. `strength` 1 is optically flat; higher bows harder.
+ */
+function fisheye(bx: number, by: number, cx: number, cy: number, maxR: number, strength: number) {
+  const dx = bx - cx;
+  const dy = by - cy;
+  const r = Math.hypot(dx, dy);
+  if (r === 0 || maxR === 0) return { x: bx, y: by };
+  const warpedR = Math.pow(r / maxR, 1 / strength) * maxR;
+  const scale = warpedR / r;
+  return { x: cx + dx * scale, y: cy + dy * scale };
+}
+
+function buildDots(
+  width: number,
+  height: number,
+  spacing: number,
+  fisheyeStrength: number,
+): Dot[] {
   const cols = Math.ceil(width / spacing) + 2;
   const rows = Math.ceil(height / spacing) + 2;
+  const cx = width / 2;
+  const cy = height / 2;
+  const maxR = Math.hypot(cx, cy);
   const dots: Dot[] = [];
 
   for (let row = 0; row < rows; row += 1) {
     for (let col = 0; col < cols; col += 1) {
+      const { x, y } = fisheye(col * spacing, row * spacing, cx, cy, maxR, fisheyeStrength);
       dots.push({
-        bx: col * spacing,
-        by: row * spacing,
+        bx: x,
+        by: y,
         inclination: Math.random() * Math.PI,
         ascension: Math.random() * Math.PI * 2,
         phase: Math.random() * Math.PI * 2,
@@ -39,14 +65,13 @@ function buildDots(width: number, height: number, spacing: number): Dot[] {
 }
 
 /**
- * Ambient, always-visible dot grid (uniform coverage, unlike WaveDotField's
- * wave-shaped sampling) that idles dim and, near the cursor, swirls each dot
- * along a tilted 3-D orbit (a parametric circle projected through
- * inclination/ascension, with a depth cue dimming and shrinking the "far"
- * side) rather than a flat 2-D nudge — ported from the original Framer "Dot
- * Grid BG" component's physics. Cursor handling mirrors WaveDotField: pass
- * `cursorRef` to share a point another element already tracks, or omit it
- * to self-track within bounds.
+ * Ambient, always-visible dot grid (uniform coverage) that idles dim and,
+ * near the cursor, swirls each dot along a tilted 3-D orbit (a parametric
+ * circle projected through inclination/ascension, with a depth cue dimming
+ * and shrinking the "far" side) rather than a flat 2-D nudge — ported from
+ * the original Framer "Dot Grid BG" component's physics. Pass `cursorRef`
+ * to share a point another element already tracks, or omit it to self-track
+ * within bounds.
  */
 export function DotGridBackground({
   cursorRef: externalCursorRef,
@@ -56,6 +81,7 @@ export function DotGridBackground({
   impactRadius = 100,
   scaleOnHover = 1.8,
   enableRevolve = true,
+  fisheyeStrength = 1.55,
   className = "",
 }: {
   cursorRef?: RefObject<CursorPoint>;
@@ -65,6 +91,7 @@ export function DotGridBackground({
   impactRadius?: number;
   scaleOnHover?: number;
   enableRevolve?: boolean;
+  fisheyeStrength?: number;
   className?: string;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -170,7 +197,7 @@ export function DotGridBackground({
         const r = (dotSize / 2) * scale;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${TEAL}, ${alpha})`;
+        ctx.fillStyle = `rgba(${PAPER}, ${alpha})`;
         ctx.fill();
       }
 
@@ -185,7 +212,7 @@ export function DotGridBackground({
       canvas.style.width = `${rect.width}px`;
       canvas.style.height = `${rect.height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      dotsRef.current = buildDots(rect.width, rect.height, spacing);
+      dotsRef.current = buildDots(rect.width, rect.height, spacing, fisheyeStrength);
     };
 
     resize();
@@ -242,6 +269,7 @@ export function DotGridBackground({
     impactRadius,
     scaleOnHover,
     enableRevolve,
+    fisheyeStrength,
   ]);
 
   return (
