@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { profile } from "../data/resume";
 import { RecDot } from "./Hud";
@@ -6,40 +6,79 @@ import { LinkButton } from "./Button";
 import { Spinner } from "./Spinner";
 import { scrollToTarget } from "../lib/smoothScroll";
 import { useTextReveal } from "../hooks/useTextReveal";
+import { useMagnetic } from "../hooks/useMagnetic";
 
 const DOWNLOAD_FEEDBACK_MS = 700;
+
+// Ease-out on the way in (a confident, slightly slower arrival), ease-in on
+// the way out (quicker — an exit shouldn't make the visitor wait).
+const ENTER_TRANSITION = "duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
+const EXIT_TRANSITION = "duration-[220ms] ease-[cubic-bezier(0.4,0,1,1)]";
 
 const items = [
   { frame: "01", label: "Featured Work", href: "#work" },
   { frame: "02", label: "Tech Stack", href: "#skills" },
-  { frame: "03", label: "Notes & Inspiration", href: "/notes" },
-  { frame: "04", label: "Education", href: "#education" },
-  { frame: "05", label: "Credentials", href: "#certifications" },
+  { frame: "03", label: "Education", href: "#education" },
+  { frame: "04", label: "Credentials", href: "#certifications" },
 ] as const;
 
 const socials = [
   { label: "GitHub", href: profile.github },
   { label: "LinkedIn", href: profile.linkedin },
   { label: "Email", href: "#" },
+  { label: "Resources", href: "/notes" },
 ];
 
 const roleWords = profile.role.split(" ");
 
 export function Nav({
+  open = true,
+  onExited,
   onFrameHover,
   onCollapse,
   onOpenContact,
 }: {
+  open?: boolean;
+  onExited?: () => void;
   onFrameHover?: (frame: number | null) => void;
   onCollapse?: () => void;
   onOpenContact?: () => void;
 }) {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const headlineRef = useTextReveal<HTMLHeadingElement>();
+  const closeRef = useMagnetic<HTMLButtonElement>(true);
+
+  // Mount already in the closed pose, then flip to entered on the next
+  // frame so the browser has a prior style to transition away from.
+  useEffect(() => {
+    if (!open) return;
+    const raf = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(raf);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) setEntered(false);
+  }, [open]);
 
   return (
-    <div className="paper-grain relative flex min-w-0 flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink split:min-h-screen split:flex-1 split:px-14">
+    <div
+      ref={rootRef}
+      inert={!open}
+      onTransitionEnd={(e) => {
+        if (e.target === rootRef.current && e.propertyName === "opacity" && !open) {
+          onExited?.();
+        }
+      }}
+      className={`paper-grain relative flex min-w-0 flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink transition-[opacity,transform] split:min-h-screen split:flex-1 split:px-14 ${
+        entered
+          ? `translate-x-0 opacity-100 ${ENTER_TRANSITION}`
+          : `translate-x-4 opacity-0 ${EXIT_TRANSITION}`
+      }`}
+    >
       <button
+        ref={closeRef}
         type="button"
         onClick={onCollapse}
         className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-4 py-2.5 cursor-pointer transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
@@ -190,6 +229,14 @@ export function Nav({
               >
                 {social.label}
               </button>
+            ) : social.label === "Resources" ? (
+              <Link
+                to={social.href}
+                className="flex items-center gap-1 font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep"
+              >
+                {social.label}
+                <span aria-hidden="true">↗</span>
+              </Link>
             ) : (
               <a
                 href={social.href}

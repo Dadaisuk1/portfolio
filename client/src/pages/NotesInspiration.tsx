@@ -28,15 +28,14 @@ export function NotesInspiration() {
           <div className="flex items-center gap-4">
             <RecDot />
             <span className="font-hud text-tag uppercase tracking-[0.08em] text-ash">
-              Viewfinder / Notes &amp; Inspiration
+              Viewfinder / Resources
             </span>
           </div>
         </div>
 
         <div>
-          <span className="font-hud text-hud text-orange">[05]</span>
-          <h1 className="mt-4 font-display text-h1 text-paper" style={{ fontWeight: 580 }}>
-            Notes &amp; Inspiration
+          <h1 className="font-display text-h1 text-paper" style={{ fontWeight: 580 }}>
+            Resources
           </h1>
           <p className="mt-4 max-w-xl font-body text-body-lg text-paper/70">
             The sites and tools I reach for when building UI — icons, type, color, and the

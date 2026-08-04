@@ -3,6 +3,9 @@ import { profile } from "../data/resume";
 import { Button } from "./Button";
 import { RecDot } from "./Hud";
 import { Spinner } from "./Spinner";
+import { useMagnetic } from "../hooks/useMagnetic";
+
+const TRIGGER_MAGNETIC_OFFSET = 8;
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -25,6 +28,7 @@ export function ContactModal({
   const [errorMessage, setErrorMessage] = useState(FALLBACK_ERROR);
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const triggerMagneticRef = useMagnetic<HTMLButtonElement>(true, TRIGGER_MAGNETIC_OFFSET);
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -88,7 +92,10 @@ export function ContactModal({
   return (
     <>
       <button
-        ref={triggerRef}
+        ref={(node) => {
+          triggerRef.current = node;
+          triggerMagneticRef.current = node;
+        }}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? "Close contact form" : "Send a message"}
@@ -200,6 +207,7 @@ export function ContactModal({
               <Button
                 type="submit"
                 variant="primary"
+                magnetic
                 disabled={status === "sending"}
                 className="mt-1"
               >
