@@ -8,9 +8,9 @@ import { scrollToTarget } from "../lib/smoothScroll";
 const items = [
   { frame: "01", label: "Featured Work", href: "#work" },
   { frame: "02", label: "Tech Stack", href: "#skills" },
-  { frame: "03", label: "UI/UX Design", href: "#about" },
-  { frame: "04", label: "Hobbies", href: "#hobbies" },
-  { frame: "05", label: "Notes & Inspiration", href: "/notes" },
+  { frame: "03", label: "Notes & Inspiration", href: "/notes" },
+  { frame: "04", label: "Education", href: "#education" },
+  { frame: "05", label: "Credentials", href: "#certifications" },
 ] as const;
 
 const socials = [
