@@ -1,9 +1,11 @@
 import { skillGroups } from "../data/resume";
 import { Tag } from "../components/Tag";
+import { useDevelopReveal } from "../hooks/useDevelopReveal";
 
 export function Skills() {
+  const ref = useDevelopReveal<HTMLElement>();
   return (
-    <section id="skills" className="mx-auto max-w-[1400px] px-6 py-24 sm:px-14">
+    <section ref={ref} id="skills" className="mx-auto max-w-[1400px] px-6 py-24 sm:px-14">
       <div className="mb-10 flex items-center gap-4">
         <span className="font-hud text-hud text-orange">[03]</span>
         <h2 className="font-display text-h2 text-paper" style={{ fontWeight: 580 }}>

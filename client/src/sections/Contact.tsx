@@ -1,10 +1,13 @@
 import { profile } from "../data/resume";
 import { LinkButton } from "../components/Button";
 import { RecDot } from "../components/Hud";
+import { useDevelopReveal } from "../hooks/useDevelopReveal";
 
 export function Contact() {
+  const ref = useDevelopReveal<HTMLElement>();
   return (
     <section
+      ref={ref}
       id="contact"
       className="paper-grain border-t border-ash/20 bg-paper px-6 py-24 text-ink sm:px-14"
     >
