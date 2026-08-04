@@ -3,7 +3,7 @@ export const profile = {
   role: "Frontend / UI-UX Developer",
   location: "Cebu, Philippines",
   email: "darwindarryljean.largoza@gmail.com",
-  phone: "+63-995-662-7081",
+  // phone: "+63-995-662-7081",
   linkedin: "https://www.linkedin.com/in/ddjl/",
   github: "https://github.com/Dadaisuk1",
   resumeUrl: "/resume.pdf",

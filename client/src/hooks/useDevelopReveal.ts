@@ -17,8 +17,16 @@ export function useDevelopReveal<T extends HTMLElement>() {
   useGSAP(
     () => {
       if (!ref.current) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduced) {
+        console.log(
+          "🎬 useDevelopReveal: Animations skipped (prefers-reduced-motion: reduce)",
+          ref.current,
+        );
+        return;
+      }
 
+      console.log("🎬 useDevelopReveal: Starting animation on", ref.current);
       gsap.fromTo(
         ref.current,
         { opacity: 0, y: 28, filter: "blur(6px) saturate(0.5)" },

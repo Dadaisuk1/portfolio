@@ -17,6 +17,7 @@ export function HomePage({ loading }: { loading: boolean }) {
   const [hoveredFrame, setHoveredFrame] = useState<number | null>(null);
   const [heroExpanded, setHeroExpanded] = useState(true);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   useSmoothScroll(!loading);
 
@@ -44,7 +45,10 @@ export function HomePage({ loading }: { loading: boolean }) {
   return (
     <>
       <div inert={loading}>
-        <section ref={heroRef} className="flex flex-col split:h-screen split:flex-row">
+        <section
+          ref={heroRef}
+          className="flex flex-col split:h-screen split:flex-row"
+        >
           <PhotoPanel
             currentFrame={hoveredFrame ?? 0}
             totalFrames={TOTAL_FRAMES}
@@ -52,7 +56,11 @@ export function HomePage({ loading }: { loading: boolean }) {
             onExpand={() => setHeroExpanded(true)}
           />
           {heroExpanded && (
-            <Nav onFrameHover={setHoveredFrame} onCollapse={() => setHeroExpanded(false)} />
+            <Nav
+              onFrameHover={setHoveredFrame}
+              onCollapse={() => setHeroExpanded(false)}
+              onOpenContact={() => setContactModalOpen(true)}
+            />
           )}
         </section>
 
@@ -63,11 +71,17 @@ export function HomePage({ loading }: { loading: boolean }) {
           <Certifications />
         </main>
 
-        <Footer />
+        <Footer onOpenContact={() => setContactModalOpen(true)} />
       </div>
 
-      <BackToTop visible={showBackToTop} onNavigate={() => setShowBackToTop(false)} />
-      <ContactModal />
+      <BackToTop
+        visible={showBackToTop}
+        onNavigate={() => setShowBackToTop(false)}
+      />
+      <ContactModal
+        isOpen={contactModalOpen}
+        onOpenChange={setContactModalOpen}
+      />
     </>
   );
 }

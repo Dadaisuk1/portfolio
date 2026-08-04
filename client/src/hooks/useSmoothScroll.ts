@@ -13,7 +13,7 @@ export function useSmoothScroll(enabled: boolean) {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const lenis = new Lenis({
-      duration: reduced ? 0.01 : 1.2,
+      duration: reduced ? 0 : 1.2,
       smoothWheel: !reduced,
     });
     setLenis(lenis);
@@ -34,8 +34,9 @@ export function useSmoothScroll(enabled: boolean) {
     return () => {
       cancelAnimationFrame(refresh);
       gsap.ticker.remove(tick);
-      setLenis(null);
+      gsap.ticker.lagSmoothing(1);
       lenis.destroy();
+      setLenis(null);
     };
   }, [enabled]);
 }

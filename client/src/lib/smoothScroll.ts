@@ -6,9 +6,9 @@ export function setLenis(instance: Lenis | null) {
   lenis = instance;
 }
 
-export function scrollToTarget(target: string | Element) {
+export function scrollToTarget(target: string | HTMLElement) {
   if (lenis) {
-    lenis.scrollTo(target as string | HTMLElement, { offset: 0 });
+    lenis.scrollTo(target, { offset: 0 });
     return;
   }
 

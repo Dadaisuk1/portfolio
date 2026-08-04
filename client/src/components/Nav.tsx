@@ -20,7 +20,7 @@ const items = [
 const socials = [
   { label: "GitHub", href: profile.github },
   { label: "LinkedIn", href: profile.linkedin },
-  { label: "Email", href: `mailto:${profile.email}` },
+  { label: "Email", href: "#" },
 ];
 
 const roleWords = profile.role.split(" ");
@@ -28,9 +28,11 @@ const roleWords = profile.role.split(" ");
 export function Nav({
   onFrameHover,
   onCollapse,
+  onOpenContact,
 }: {
   onFrameHover?: (frame: number | null) => void;
   onCollapse?: () => void;
+  onOpenContact?: () => void;
 }) {
   const [isDownloading, setIsDownloading] = useState(false);
   const headlineRef = useTextReveal<HTMLHeadingElement>();
@@ -40,12 +42,19 @@ export function Nav({
       <button
         type="button"
         onClick={onCollapse}
-        className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-4 py-2.5 transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
+        className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-4 py-2.5 cursor-pointer transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
       >
         <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-          <path d="M1 1 L9 9 M9 1 L1 9" fill="none" stroke="currentColor" strokeWidth="1.4" />
+          <path
+            d="M1 1 L9 9 M9 1 L1 9"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
         </svg>
-        <span className="font-hud text-tag uppercase tracking-[0.08em]">Close</span>
+        <span className="font-hud text-tag uppercase tracking-[0.08em]">
+          Close
+        </span>
       </button>
 
       <div>
@@ -82,7 +91,9 @@ export function Nav({
             const isRoute = item.href.startsWith("/");
             const rowContent = (
               <>
-                <span className="font-hud text-hud text-orange-deep">[{item.frame}]</span>
+                <span className="font-hud text-hud text-orange-deep">
+                  [{item.frame}]
+                </span>
                 <span
                   className="font-display text-h3 text-ink group-hover:text-orange-deep group-focus-visible:text-orange-deep"
                   style={{ fontWeight: 580 }}
@@ -93,7 +104,7 @@ export function Nav({
             );
             const rowProps = {
               className:
-                "group flex items-center gap-4 py-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep hover:text-orange-deep",
+                "group flex items-center gap-4 py-4 cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep hover:text-orange-deep",
               onMouseEnter: () => onFrameHover?.(Number(item.frame)),
               onMouseLeave: () => onFrameHover?.(null),
               onFocus: () => onFrameHover?.(Number(item.frame)),
@@ -128,6 +139,7 @@ export function Nav({
           href="#work"
           variant="primary"
           magnetic
+          forceMagnetic
           onClick={(e) => {
             e.preventDefault();
             scrollToTarget("#work");
@@ -139,11 +151,15 @@ export function Nav({
           href={profile.resumeUrl}
           variant="ghost-dark"
           magnetic
+          forceMagnetic
           download
           aria-busy={isDownloading}
           onClick={() => {
             setIsDownloading(true);
-            window.setTimeout(() => setIsDownloading(false), DOWNLOAD_FEEDBACK_MS);
+            window.setTimeout(
+              () => setIsDownloading(false),
+              DOWNLOAD_FEEDBACK_MS,
+            );
           }}
         >
           {isDownloading ? (
@@ -160,15 +176,30 @@ export function Nav({
       <div className="flex flex-wrap items-center gap-5">
         {socials.map((social, i) => (
           <Fragment key={social.label}>
-            {i > 0 && <span className="h-[3px] w-[3px] shrink-0 rounded-full bg-ash" aria-hidden="true" />}
-            <a
-              href={social.href}
-              target={social.href.startsWith("mailto:") ? undefined : "_blank"}
-              rel={social.href.startsWith("mailto:") ? undefined : "noreferrer"}
-              className="font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep"
-            >
-              {social.label}
-            </a>
+            {i > 0 && (
+              <span
+                className="h-[3px] w-[3px] shrink-0 rounded-full bg-ash"
+                aria-hidden="true"
+              />
+            )}
+            {social.label === "Email" ? (
+              <button
+                type="button"
+                onClick={() => onOpenContact?.()}
+                className="font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep cursor-pointer"
+              >
+                {social.label}
+              </button>
+            ) : (
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noreferrer"
+                className="font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep"
+              >
+                {social.label}
+              </a>
+            )}
           </Fragment>
         ))}
       </div>

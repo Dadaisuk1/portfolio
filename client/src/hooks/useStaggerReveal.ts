@@ -18,12 +18,20 @@ export function useStaggerReveal<T extends HTMLElement>(childSelector?: string) 
   useGSAP(
     () => {
       if (!ref.current) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduced) {
+        console.log(
+          "🎬 useStaggerReveal: Animations skipped (prefers-reduced-motion: reduce)",
+          ref.current,
+        );
+        return;
+      }
 
       const targets = childSelector
         ? ref.current.querySelectorAll(childSelector)
         : ref.current.children;
 
+      console.log("🎬 useStaggerReveal: Starting stagger animation on", targets.length, "items");
       gsap.fromTo(
         targets,
         { opacity: 0, filter: "blur(6px)" },

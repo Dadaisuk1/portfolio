@@ -10,8 +10,17 @@ const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 const ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
 const FALLBACK_ERROR = `Couldn't send that — email me directly at ${profile.email} instead.`;
 
-export function ContactModal() {
-  const [isOpen, setIsOpen] = useState(false);
+export function ContactModal({
+  isOpen: controlledIsOpen,
+  onOpenChange,
+}: {
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+} = {}) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen =
+    controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  const setIsOpen = onOpenChange || setInternalIsOpen;
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState(FALLBACK_ERROR);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -44,7 +53,9 @@ export function ContactModal() {
 
     if (!ACCESS_KEY) {
       setStatus("error");
-      setErrorMessage(`This form isn't wired up yet — email me directly at ${profile.email} instead.`);
+      setErrorMessage(
+        `This form isn't wired up yet — email me directly at ${profile.email} instead.`,
+      );
       return;
     }
 
@@ -79,17 +90,29 @@ export function ContactModal() {
       <button
         ref={triggerRef}
         type="button"
-        onClick={() => setIsOpen((v) => !v)}
+        onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? "Close contact form" : "Send a message"}
         aria-expanded={isOpen}
-        className="fixed bottom-6 left-6 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 bg-ink text-paper shadow-lg transition-colors hover:border-orange hover:text-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:bottom-8 sm:left-8"
+        className="fixed bottom-6 left-6 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 bg-ink text-paper shadow-lg transition-colors hover:border-orange hover:text-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:bottom-8 sm:left-8 cursor-pointer"
       >
         {isOpen ? (
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M2 2 L14 14 M14 2 L2 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            <path
+              d="M2 2 L14 14 M14 2 L2 14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
           </svg>
         ) : (
-          <svg width="19" height="19" viewBox="0 0 19 19" fill="none" aria-hidden="true">
+          <svg
+            width="19"
+            height="19"
+            viewBox="0 0 19 19"
+            fill="none"
+            aria-hidden="true"
+          >
             <path
               d="M2.5 5c0-.83.67-1.5 1.5-1.5h11c.83 0 1.5.67 1.5 1.5v7.5c0 .83-.67 1.5-1.5 1.5H7.5l-3.8 3.2v-3.2H4c-.83 0-1.5-.67-1.5-1.5V5Z"
               stroke="currentColor"
@@ -116,7 +139,8 @@ export function ContactModal() {
 
           <div className="flex flex-col gap-3 px-4 pt-4">
             <p className="max-w-[85%] rounded-md rounded-tl-none bg-ink/5 px-3 py-2 font-body text-body text-ink">
-              Hey, I'm {profile.name.split(" ")[0]} — leave a message and I'll get back to you.
+              Hey, I'm {profile.name.split(" ")[0]} — leave a message and I'll
+              get back to you.
             </p>
           </div>
 
@@ -127,9 +151,15 @@ export function ContactModal() {
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3 p-4">
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              className="flex flex-col gap-3 p-4"
+            >
               <label className="flex flex-col gap-1">
-                <span className="font-hud text-tag uppercase tracking-[0.06em] text-ash-deep">Name</span>
+                <span className="font-hud text-tag uppercase tracking-[0.06em] text-ash-deep">
+                  Name
+                </span>
                 <input
                   ref={firstFieldRef}
                   type="text"
@@ -139,7 +169,9 @@ export function ContactModal() {
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="font-hud text-tag uppercase tracking-[0.06em] text-ash-deep">Email</span>
+                <span className="font-hud text-tag uppercase tracking-[0.06em] text-ash-deep">
+                  Email
+                </span>
                 <input
                   type="email"
                   name="email"
@@ -148,7 +180,9 @@ export function ContactModal() {
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="font-hud text-tag uppercase tracking-[0.06em] text-ash-deep">Message</span>
+                <span className="font-hud text-tag uppercase tracking-[0.06em] text-ash-deep">
+                  Message
+                </span>
                 <textarea
                   name="message"
                   required
@@ -163,7 +197,12 @@ export function ContactModal() {
                 </p>
               )}
 
-              <Button type="submit" variant="primary" disabled={status === "sending"} className="mt-1">
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={status === "sending"}
+                className="mt-1"
+              >
                 {status === "sending" ? (
                   <>
                     <Spinner />

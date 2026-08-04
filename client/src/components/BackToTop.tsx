@@ -19,8 +19,10 @@ export function BackToTop({
       }}
       aria-label="Back to top"
       tabIndex={visible ? 0 : -1}
-      className={`fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-paper/30 bg-ink text-paper shadow-lg transition-all duration-300 hover:border-orange hover:text-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:bottom-8 sm:right-8 ${
-        visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-2 opacity-0"
+      className={`fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-paper/30 bg-ink text-paper shadow-lg transition-all duration-300 hover:border-orange hover:text-orange focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:bottom-8 sm:right-8 cursor-pointer ${
+        visible
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-2 opacity-0"
       }`}
     >
       <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">

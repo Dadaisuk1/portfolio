@@ -52,10 +52,15 @@ export function PhotoPanel({
         <button
           type="button"
           onClick={onExpand}
-          className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-paper/60 px-4 py-2.5 transition-colors hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:right-8 sm:top-8"
+          className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-paper/60 px-4 py-2.5 transition-colors hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:right-8 sm:top-8 cursor-pointer"
         >
           <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true">
-            <path d="M0 1 H14 M0 5 H14 M0 9 H14" fill="none" stroke="currentColor" strokeWidth="1.4" />
+            <path
+              d="M0 1 H14 M0 5 H14 M0 9 H14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
           </svg>
           <span className="font-hud text-tag uppercase tracking-[0.08em] text-paper">
             Menu
