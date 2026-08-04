@@ -3,10 +3,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PhotoPanel } from "../components/PhotoPanel";
 import { Nav } from "../components/Nav";
 import { Work } from "../sections/Work";
-import { About } from "../sections/About";
 import { Skills } from "../sections/Skills";
-import { Hobbies } from "../sections/Hobbies";
 import { Education } from "../sections/Education";
+import { Certifications } from "../sections/Certifications";
+import { Footer } from "../components/Footer";
 import { useSmoothScroll } from "../hooks/useSmoothScroll";
 
 const TOTAL_FRAMES = 5;
@@ -42,10 +42,11 @@ export function HomePage({ loading }: { loading: boolean }) {
         <main>
           <Work />
           <Skills />
-          <About />
-          <Hobbies />
           <Education />
+          <Certifications />
         </main>
+
+        <Footer />
       </div>
     </div>
   );

@@ -4,48 +4,66 @@ import { useDevelopReveal } from "../hooks/useDevelopReveal";
 export function Work() {
   const ref = useDevelopReveal<HTMLElement>();
   return (
-    <section ref={ref} id="work" className="px-6 py-24 sm:px-14">
-      <div className="mb-10 flex items-center gap-4">
-        <span className="font-hud text-hud text-orange">[01]</span>
-        <h2 className="font-display text-h2 text-paper" style={{ fontWeight: 580 }}>
-          Featured Work
-        </h2>
-      </div>
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <section
+      ref={ref}
+      id="work"
+      className="paper-grain border-t border-ink/10 bg-paper px-6 py-16 text-ink sm:px-14 sm:py-24"
+    >
+      <div className="mx-auto flex max-w-[1400px] flex-col">
+        <div className="flex flex-col items-start justify-between gap-6 border-b border-ink/12 pb-7 sm:flex-row sm:items-baseline">
+          <div className="flex flex-col gap-2">
+            <span className="font-hud text-tag uppercase tracking-[0.08em] text-orange">
+              [01] Featured Work
+            </span>
+            <h2 className="font-display text-h2 text-ink" style={{ fontWeight: 580 }}>
+              Selected Projects
+            </h2>
+          </div>
+          <p className="max-w-[340px] shrink-0 font-body text-body text-orange-muted sm:text-right">
+            Four shipped builds — from a solo capstone to 5-person team projects.
+          </p>
+        </div>
+
         {projects.map((project) => (
           <article
             key={project.name}
-            className="grain flex flex-col gap-4 rounded-md border border-ash/20 bg-ink-blue p-6 sm:p-8"
+            className="flex flex-col gap-6 border-b border-ink/12 py-7 sm:flex-row sm:gap-8"
           >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <span className="font-hud text-tag text-orange">FRAME {project.frame}/04</span>
-                <h3
-                  className="mt-2 font-display text-h3 text-paper"
-                  style={{ fontWeight: 460 }}
-                >
-                  {project.name}
-                </h3>
-                <p className="mt-1 font-hud text-tag uppercase tracking-[0.06em] text-ash">
-                  {project.tagline}
-                </p>
-              </div>
-              <span className="shrink-0 font-hud text-tag text-ash">{project.period}</span>
+            <div className="flex w-full shrink-0 flex-col gap-2 sm:w-[300px]">
+              <h3 className="font-display text-h3 text-ink" style={{ fontWeight: 580 }}>
+                {project.name}
+              </h3>
+              <p className="text-sm text-ash">{project.tagline}</p>
+              <p className="mt-2 font-hud text-tag uppercase tracking-[0.08em] text-teal">
+                {project.meta}
+              </p>
             </div>
 
-            <p className="font-body text-body leading-relaxed text-paper/75">
-              {project.description}
-            </p>
+            <div className="flex grow flex-col gap-4">
+              <p className="font-body text-body leading-relaxed text-ink/85">
+                {project.description}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {project.stack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded-full border border-orange-muted px-3 py-1 font-hud text-tag uppercase tracking-[0.08em] text-orange-muted"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
 
-            <div className="mt-auto flex flex-wrap gap-2 pt-2">
-              {project.stack.map((tech) => (
-                <span
-                  key={tech}
-                  className="rounded-full border border-teal px-3 py-1 font-hud text-tag uppercase tracking-[0.06em] text-paper/70"
-                >
-                  {tech}
-                </span>
-              ))}
+            <div className="shrink-0">
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noreferrer"
+                className="font-hud text-tag uppercase tracking-[0.08em] text-ink transition-colors hover:text-orange-deep"
+              >
+                View ↗
+              </a>
             </div>
           </article>
         ))}
