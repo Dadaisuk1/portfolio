@@ -13,7 +13,6 @@ export const profile = {
 export const techStack = [
   {
     label: "Frontend",
-    highlight: false,
     items: [
       { name: "React", icon: "react" },
       { name: "TailwindCSS", icon: "tailwind" },
@@ -22,7 +21,6 @@ export const techStack = [
   },
   {
     label: "Backend",
-    highlight: false,
     items: [
       { name: "Node.js / Express", icon: "node" },
       { name: "Django", icon: "django" },
@@ -31,7 +29,6 @@ export const techStack = [
   },
   {
     label: "Data",
-    highlight: false,
     items: [
       { name: "PostgreSQL", icon: "postgresql" },
       { name: "MySQL", icon: "mysql" },
@@ -40,7 +37,6 @@ export const techStack = [
   },
   {
     label: "Tools & Workflow",
-    highlight: false,
     items: [
       { name: "Git / GitHub", icon: "github" },
       { name: "Docker", icon: "docker" },
@@ -49,7 +45,6 @@ export const techStack = [
   },
   {
     label: "AI-Assisted Dev",
-    highlight: true,
     items: [
       { name: "Claude Code", icon: "claude" },
       { name: "Cursor", icon: "cursor" },
@@ -112,6 +107,7 @@ export const projects = [
 export const education = {
   degree: "Bachelor of Science in Information Technology",
   school: "Cebu Institute of Technology – University",
+  schoolUrl: "https://cit.edu/",
   period: "2022 – Present",
 };
 

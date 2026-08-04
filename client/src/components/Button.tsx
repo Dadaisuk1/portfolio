@@ -1,10 +1,10 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 
 const base =
-  "inline-flex min-h-11 items-center justify-center gap-2 px-6 py-3 rounded-sm font-hud text-tag uppercase tracking-[0.06em] border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current";
+  "inline-flex min-h-11 items-center justify-center gap-2 px-6 py-3 rounded-sm font-hud font-medium text-tag uppercase tracking-[0.06em] border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current";
 
 const variants = {
-  primary: "bg-orange border-orange text-ink hover:bg-transparent hover:text-orange",
+  primary: "bg-orange-deep border-orange-deep text-paper hover:bg-transparent hover:text-orange-deep",
   ghost: "bg-transparent border-paper text-paper hover:bg-paper hover:text-ink",
   "ghost-dark": "bg-transparent border-ink text-ink hover:bg-ink hover:text-paper",
 };

@@ -17,11 +17,11 @@ export function HomePage({ loading }: { loading: boolean }) {
   const [heroExpanded, setHeroExpanded] = useState(true);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
-  const { wrapperRef, contentRef } = useSmoothScroll(!loading);
+  useSmoothScroll(!loading);
 
   // Toggling the hero mounts/unmounts the whole Nav panel, which changes
   // page height — keep GSAP's cached measurements in sync so scroll math
-  // (and ScrollSmoother's width normalization) doesn't go stale.
+  // doesn't go stale.
   useEffect(() => {
     const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
     return () => cancelAnimationFrame(raf);
@@ -42,29 +42,27 @@ export function HomePage({ loading }: { loading: boolean }) {
 
   return (
     <>
-      <div id="smooth-wrapper" ref={wrapperRef}>
-        <div id="smooth-content" ref={contentRef} inert={loading}>
-          <section ref={heroRef} className="flex flex-col split:h-screen split:flex-row">
-            <PhotoPanel
-              currentFrame={hoveredFrame ?? 0}
-              totalFrames={TOTAL_FRAMES}
-              collapsed={!heroExpanded}
-              onExpand={() => setHeroExpanded(true)}
-            />
-            {heroExpanded && (
-              <Nav onFrameHover={setHoveredFrame} onCollapse={() => setHeroExpanded(false)} />
-            )}
-          </section>
+      <div inert={loading}>
+        <section ref={heroRef} className="flex flex-col split:h-screen split:flex-row">
+          <PhotoPanel
+            currentFrame={hoveredFrame ?? 0}
+            totalFrames={TOTAL_FRAMES}
+            collapsed={!heroExpanded}
+            onExpand={() => setHeroExpanded(true)}
+          />
+          {heroExpanded && (
+            <Nav onFrameHover={setHoveredFrame} onCollapse={() => setHeroExpanded(false)} />
+          )}
+        </section>
 
-          <main>
-            <Work />
-            <Skills />
-            <Education />
-            <Certifications />
-          </main>
+        <main>
+          <Work />
+          <Skills />
+          <Education />
+          <Certifications />
+        </main>
 
-          <Footer />
-        </div>
+        <Footer />
       </div>
 
       <BackToTop visible={showBackToTop} onNavigate={() => setShowBackToTop(false)} />

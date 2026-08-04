@@ -1,9 +1,20 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { profile } from "../data/resume";
 import { RecDot } from "./Hud";
 import { LinkButton } from "./Button";
 import { scrollToTarget } from "../lib/smoothScroll";
+
+const DOWNLOAD_FEEDBACK_MS = 700;
+
+function Spinner() {
+  return (
+    <svg className="h-4 w-4 shrink-0 animate-spin" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.25" />
+      <path d="M14.5 8a6.5 6.5 0 0 0-6.5-6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 const items = [
   { frame: "01", label: "Featured Work", href: "#work" },
@@ -26,6 +37,8 @@ export function Nav({
   onFrameHover?: (frame: number | null) => void;
   onCollapse?: () => void;
 }) {
+  const [isDownloading, setIsDownloading] = useState(false);
+
   return (
     <div className="paper-grain relative flex min-w-0 flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink split:min-h-screen split:flex-1 split:px-14">
       <button
@@ -116,8 +129,24 @@ export function Nav({
         >
           View Featured Work
         </LinkButton>
-        <LinkButton href={profile.resumeUrl} variant="ghost-dark" download>
-          Download Resume ↓
+        <LinkButton
+          href={profile.resumeUrl}
+          variant="ghost-dark"
+          download
+          aria-busy={isDownloading}
+          onClick={() => {
+            setIsDownloading(true);
+            window.setTimeout(() => setIsDownloading(false), DOWNLOAD_FEEDBACK_MS);
+          }}
+        >
+          {isDownloading ? (
+            <>
+              <Spinner />
+              Downloading…
+            </>
+          ) : (
+            "Download Resume ↓"
+          )}
         </LinkButton>
       </div>
 

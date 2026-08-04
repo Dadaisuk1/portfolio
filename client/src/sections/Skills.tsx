@@ -24,11 +24,7 @@ export function Skills() {
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
           {techStack.map((group) => (
             <div key={group.label} className="flex flex-col gap-4">
-              <span
-                className={`font-hud text-tag uppercase tracking-[0.08em] ${
-                  group.highlight ? "text-orange" : "text-teal"
-                }`}
-              >
+              <span className="font-hud text-tag font-medium uppercase tracking-[0.08em] text-orange">
                 {group.label}
               </span>
               <div className="flex flex-col gap-3">
