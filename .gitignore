@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local AI tooling (Claude Code, agent skills) — not part of the app
+.claude/
+.agents/
+skills-lock.json

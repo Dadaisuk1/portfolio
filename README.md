@@ -1,32 +1,39 @@
-# React + TypeScript + Vite
+# Portfolio — VIEWFINDER
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Darwin Largoza's portfolio. React + TypeScript + Tailwind CSS v4, built on the VIEWFINDER
+design system (see `.claude/design.md` for the full spec: color, type, spacing, components).
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- [Vite](https://vite.dev/) + React 19 + TypeScript
+- Tailwind CSS v4 (tokens defined in `src/index.css` via `@theme`)
+- `oxlint` for linting
 
-## React Compiler
+## Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+src/
+  data/resume.ts       content pulled from public/resume.md — edit this to update copy
+  components/          Hud.tsx, Button.tsx, Tag.tsx, LoadingScreen.tsx, PhotoPanel.tsx, Nav.tsx
+  sections/             Work.tsx, About.tsx, Skills.tsx, Education.tsx, Contact.tsx
+  App.tsx               loading screen -> split-screen home -> sections
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+The split-screen layout uses a custom `split:` breakpoint at 700px (defined in `index.css`)
+matching the design spec's mobile/desktop cutoff.
+
+## Getting started
+
+```
+npm install
+npm run dev      # http://localhost:5173
+npm run build
+npm run lint
+```
+
+## Notes for extending
+
+- `PhotoPanel.tsx` has a placeholder viewfinder — swap in a real photo per the spec ("colors
+  sampled directly from the portfolio owner's own photos, not invented").
+- `Nav.tsx` links (`#work`, `#about`, `#skills`, `#contact`) scroll to sections in `App.tsx`.
+- Update `src/data/resume.ts` as the single source of truth for name, projects, skills, etc.
