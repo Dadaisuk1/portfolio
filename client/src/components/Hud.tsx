@@ -10,11 +10,18 @@ export function CornerBrackets() {
   );
 }
 
-export function RecDot({ className = "" }: { className?: string }) {
+export function RecDot({
+  className = "",
+  tone = "dark",
+}: {
+  className?: string;
+  tone?: "dark" | "light";
+}) {
+  const textTone = tone === "light" ? "text-orange-deep" : "text-orange";
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <span className="h-1.5 w-1.5 rounded-full bg-orange motion-safe:animate-[rec-pulse_1.6s_ease-in-out_infinite]" />
-      <span className="font-hud text-tag tracking-[0.08em] text-orange uppercase">REC</span>
+      <span className={`font-hud text-tag tracking-[0.08em] uppercase ${textTone}`}>REC</span>
     </div>
   );
 }

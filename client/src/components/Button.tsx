@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 
 const base =
-  "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-sm font-hud text-tag uppercase tracking-[0.06em] border-2 transition-colors";
+  "inline-flex min-h-11 items-center justify-center gap-2 px-6 py-3 rounded-sm font-hud text-tag uppercase tracking-[0.06em] border-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current";
 
 const variants = {
   primary: "bg-orange border-orange text-ink hover:bg-transparent hover:text-orange",

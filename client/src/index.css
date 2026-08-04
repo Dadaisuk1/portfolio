@@ -6,6 +6,7 @@
   --color-ink-blue: #151c23;
   --color-paper: #f5f2ea;
   --color-orange: #ee5d00;
+  --color-orange-deep: #a33e00; /* orange text on paper — --color-orange fails WCAG AA there */
   --color-orange-muted: #753229;
   --color-teal: #175669;
   --color-ash: #848d94;

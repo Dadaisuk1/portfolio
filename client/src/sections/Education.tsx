@@ -2,11 +2,17 @@ import { certifications, education, languages } from "../data/resume";
 
 export function Education() {
   return (
-    <section className="mx-auto max-w-[1400px] px-6 py-24 sm:px-14">
+    <section id="education" className="mx-auto max-w-[1400px] px-6 py-24 sm:px-14">
+      <div className="mb-10 flex items-center gap-4">
+        <span className="font-hud text-hud text-orange">[04]</span>
+        <h2 className="font-display text-h2 text-paper" style={{ fontWeight: 580 }}>
+          Education
+        </h2>
+      </div>
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
         <div>
           <h3 className="mb-4 font-hud text-tag uppercase tracking-[0.08em] text-ash">
-            Education
+            Degree
           </h3>
           <p className="font-display text-h3 text-paper" style={{ fontWeight: 460 }}>
             {education.degree}

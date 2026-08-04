@@ -10,8 +10,8 @@ export function Contact() {
     >
       <div className="mx-auto flex max-w-[1400px] flex-col gap-10">
         <div className="flex items-center gap-4">
-          <RecDot />
-          <span className="font-hud text-tag uppercase tracking-[0.08em] text-ash">
+          <RecDot tone="light" />
+          <span className="font-hud text-tag uppercase tracking-[0.08em] text-ink/70">
             Open to internships
           </span>
         </div>
@@ -35,7 +35,7 @@ export function Contact() {
           </LinkButton>
         </div>
 
-        <div className="mt-10 flex flex-col gap-1 border-t border-ash/25 pt-6 font-hud text-tag text-ash">
+        <div className="mt-10 flex flex-col gap-1 border-t border-ash/25 pt-6 font-hud text-tag text-ink/70">
           <span>{profile.location}</span>
           <span>{profile.email}</span>
           <span>{profile.phone}</span>

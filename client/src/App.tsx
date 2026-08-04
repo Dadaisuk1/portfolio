@@ -15,17 +15,19 @@ function App() {
     <>
       {loading && <LoadingScreen onDone={() => setLoading(false)} />}
 
-      <main className="flex flex-col split:flex-row">
-        <PhotoPanel />
-        <div className="flex-1">
-          <Nav />
-          <Work />
-          <About />
-          <Skills />
-          <Education />
-        </div>
-      </main>
-      <Contact />
+      <div inert={loading}>
+        <main className="flex flex-col split:flex-row">
+          <PhotoPanel />
+          <div className="flex-1">
+            <Nav />
+            <Work />
+            <About />
+            <Skills />
+            <Education />
+          </div>
+        </main>
+        <Contact />
+      </div>
     </>
   );
 }
