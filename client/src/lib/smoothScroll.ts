@@ -1,14 +1,14 @@
-import type { ScrollSmoother } from "gsap/ScrollSmoother";
+import type Lenis from "lenis";
 
-let smoother: ScrollSmoother | null = null;
+let lenis: Lenis | null = null;
 
-export function setSmoother(instance: ScrollSmoother | null) {
-  smoother = instance;
+export function setLenis(instance: Lenis | null) {
+  lenis = instance;
 }
 
 export function scrollToTarget(target: string | Element) {
-  if (smoother) {
-    smoother.scrollTo(target, true, "top top");
+  if (lenis) {
+    lenis.scrollTo(target as string | HTMLElement, { offset: 0 });
     return;
   }
 
@@ -17,8 +17,8 @@ export function scrollToTarget(target: string | Element) {
 }
 
 export function scrollToTop() {
-  if (smoother) {
-    smoother.scrollTo(0, true);
+  if (lenis) {
+    lenis.scrollTo(0);
     return;
   }
 

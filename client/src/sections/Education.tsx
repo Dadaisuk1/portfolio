@@ -26,7 +26,14 @@ export function Education() {
             </p>
             <div className="mt-2 flex items-center gap-2">
               <img src="/assets/cit.png" alt="" className="h-5 w-5 object-contain" />
-              <p className="font-body text-body text-paper/70">{education.school}</p>
+              <a
+                href={education.schoolUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="font-body text-body text-paper/70 underline decoration-ash/40 underline-offset-2 transition-colors hover:text-paper hover:decoration-orange"
+              >
+                {education.school}
+              </a>
             </div>
             <p className="mt-1 font-hud text-tag text-ash">{education.period}</p>
           </div>
