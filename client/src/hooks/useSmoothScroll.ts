@@ -22,6 +22,9 @@ export function useSmoothScroll(enabled: boolean) {
       normalizeScroll: true,
       ignoreMobileResize: true,
     });
+    // Guard against any scroll offset picked up while the loading screen
+    // covered the page (e.g. bfcache/restoration) — always hand off at top.
+    smoother.scrollTop(0);
     setSmoother(smoother);
 
     // Layout settles a beat after mount (fonts, images) — refresh once it does.
