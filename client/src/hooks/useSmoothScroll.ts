@@ -18,7 +18,7 @@ export function useSmoothScroll(enabled: boolean) {
     const smoother = ScrollSmoother.create({
       wrapper: wrapperRef.current,
       content: contentRef.current,
-      smooth: reduced ? 0 : 1.2,
+      smooth: reduced ? 0 : 1.8,
       normalizeScroll: true,
       ignoreMobileResize: true,
     });

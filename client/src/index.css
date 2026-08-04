@@ -53,10 +53,14 @@
 
   html {
     scroll-behavior: smooth;
+    background: var(--color-ink);
+    overflow-x: hidden;
   }
 
   body {
     margin: 0;
+    width: 100%;
+    overflow-x: hidden;
     background: var(--color-ink);
     color: var(--color-paper);
     font-family: var(--font-body);
