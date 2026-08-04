@@ -2,12 +2,18 @@ import { currentlyExpanding, techStack } from "../data/resume";
 import { techIcons } from "../components/icons/techIconMap";
 import { useDevelopReveal } from "../hooks/useDevelopReveal";
 import { useStaggerReveal } from "../hooks/useStaggerReveal";
+import { WaveDotField } from "../components/WaveDotField";
 
 export function Skills() {
   const ref = useDevelopReveal<HTMLElement>();
   const gridRef = useStaggerReveal<HTMLDivElement>("[data-reveal-item]");
   return (
-    <section ref={ref} id="skills" className="bg-ink px-6 py-16 text-paper sm:px-14 sm:py-24">
+    <section
+      ref={ref}
+      id="skills"
+      className="relative isolate bg-ink px-6 py-16 text-paper sm:px-14 sm:py-24"
+    >
+      <WaveDotField tone="dark" spacing={16} alphaScale={0.6} className="-z-10" />
       <div className="mx-auto flex max-w-[1400px] flex-col gap-8">
         <div className="flex flex-col items-start justify-between gap-6 border-b border-ash/20 pb-7 sm:flex-row sm:items-baseline">
           <div className="flex flex-col gap-2">
