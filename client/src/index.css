@@ -133,20 +133,11 @@
   }
 }
 
-@keyframes developing-bar {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
+/* Registers --iris-r as an interpolable length so the shutter's aperture
+   mask can transition smoothly instead of jumping between values. */
+@property --iris-r {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
 }
 
-@keyframes shutter-flash {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
