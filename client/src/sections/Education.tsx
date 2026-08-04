@@ -1,5 +1,6 @@
 import { education, languages } from "../data/resume";
 import { useDevelopReveal } from "../hooks/useDevelopReveal";
+import { ImageWithSkeleton } from "../components/ImageWithSkeleton";
 
 export function Education() {
   const ref = useDevelopReveal<HTMLElement>();
@@ -25,7 +26,7 @@ export function Education() {
               {education.degree}
             </p>
             <div className="mt-2 flex items-center gap-2">
-              <img src="/assets/cit.png" alt="" className="h-5 w-5 object-contain" />
+              <ImageWithSkeleton src="/assets/cit.png" alt="" width={20} height={20} />
               <a
                 href={education.schoolUrl}
                 target="_blank"
