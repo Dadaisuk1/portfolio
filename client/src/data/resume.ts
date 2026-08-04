@@ -4,11 +4,21 @@ export const profile = {
   location: "Cebu, Philippines",
   email: "darwindarryljean.largoza@gmail.com",
   phone: "+63-995-662-7081",
-  linkedin: "https://linkedin.com/",
-  github: "https://github.com/",
+  linkedin: "https://www.linkedin.com/in/ddjl/",
+  github: "https://github.com/Dadaisuk1",
+  resumeUrl: "/resume.pdf",
   summary:
     "4th-year Information Technology student with hands-on experience across full-stack development (React, Node.js, Django), UI/UX design, and cloud architecture (AWS-certified). Proficient in JavaScript and Git-based collaboration, with working knowledge of relational and NoSQL databases (MySQL, MongoDB) and applied information security fundamentals. Adaptable across tech stacks and comfortable working in Agile team environments. Seeking a technical internship to apply and grow these skills.",
 };
+
+export const hobbies = [
+  "Photography",
+  "Videography",
+  "Chess",
+  "Hiking",
+  "Camping",
+  "Road Trips",
+] as const;
 
 export const skillGroups = [
   {

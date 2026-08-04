@@ -7,9 +7,9 @@ export function Skills() {
   return (
     <section ref={ref} id="skills" className="px-6 py-24 sm:px-14">
       <div className="mb-10 flex items-center gap-4">
-        <span className="font-hud text-hud text-orange">[03]</span>
+        <span className="font-hud text-hud text-orange">[02]</span>
         <h2 className="font-display text-h2 text-paper" style={{ fontWeight: 580 }}>
-          Skills
+          Tech Stack
         </h2>
       </div>
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">

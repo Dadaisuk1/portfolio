@@ -8,7 +8,7 @@ export function Work() {
       <div className="mb-10 flex items-center gap-4">
         <span className="font-hud text-hud text-orange">[01]</span>
         <h2 className="font-display text-h2 text-paper" style={{ fontWeight: 580 }}>
-          Work
+          Featured Work
         </h2>
       </div>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

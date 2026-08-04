@@ -1,22 +1,44 @@
+import { Fragment } from "react";
+import { Link } from "react-router-dom";
 import { profile } from "../data/resume";
 import { RecDot } from "./Hud";
+import { LinkButton } from "./Button";
 import { scrollToTarget } from "../lib/smoothScroll";
 
 const items = [
-  { frame: "01", label: "Work", href: "#work" },
-  { frame: "02", label: "About", href: "#about" },
-  { frame: "03", label: "Skills", href: "#skills" },
-  { frame: "04", label: "Education", href: "#education" },
-  { frame: "05", label: "Contact", href: "#contact" },
+  { frame: "01", label: "Featured Work", href: "#work" },
+  { frame: "02", label: "Tech Stack", href: "#skills" },
+  { frame: "03", label: "UI/UX Design", href: "#about" },
+  { frame: "04", label: "Hobbies", href: "#hobbies" },
+  { frame: "05", label: "Notes & Inspiration", href: "/notes" },
+] as const;
+
+const socials = [
+  { label: "GitHub", href: profile.github },
+  { label: "LinkedIn", href: profile.linkedin },
+  { label: "Email", href: `mailto:${profile.email}` },
 ];
 
 export function Nav({
   onFrameHover,
+  onCollapse,
 }: {
   onFrameHover?: (frame: number | null) => void;
+  onCollapse?: () => void;
 }) {
   return (
-    <div className="paper-grain flex flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink split:min-h-screen split:px-14">
+    <div className="paper-grain relative flex flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink split:min-h-screen split:px-14">
+      <button
+        type="button"
+        onClick={onCollapse}
+        className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-4 py-2.5 transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
+      >
+        <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+          <path d="M1 1 L9 9 M9 1 L1 9" fill="none" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+        <span className="font-hud text-tag uppercase tracking-[0.08em]">Close</span>
+      </button>
+
       <div>
         <div className="mb-4 flex items-center gap-4">
           <RecDot tone="light" />
@@ -38,20 +60,10 @@ export function Nav({
 
       <nav aria-label="Primary">
         <ul className="flex flex-col gap-1">
-          {items.map((item) => (
-            <li key={item.frame} className="border-b border-ash/25">
-              <a
-                href={item.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToTarget(item.href);
-                }}
-                onMouseEnter={() => onFrameHover?.(Number(item.frame))}
-                onMouseLeave={() => onFrameHover?.(null)}
-                onFocus={() => onFrameHover?.(Number(item.frame))}
-                onBlur={() => onFrameHover?.(null)}
-                className="group flex items-center gap-4 py-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep hover:text-orange-deep"
-              >
+          {items.map((item) => {
+            const isRoute = item.href.startsWith("/");
+            const rowContent = (
+              <>
                 <span className="font-hud text-hud text-orange-deep">[{item.frame}]</span>
                 <span
                   className="font-display text-h3 text-ink group-hover:text-orange-deep group-focus-visible:text-orange-deep"
@@ -59,11 +71,71 @@ export function Nav({
                 >
                   {item.label}
                 </span>
-              </a>
-            </li>
-          ))}
+              </>
+            );
+            const rowProps = {
+              className:
+                "group flex items-center gap-4 py-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep hover:text-orange-deep",
+              onMouseEnter: () => onFrameHover?.(Number(item.frame)),
+              onMouseLeave: () => onFrameHover?.(null),
+              onFocus: () => onFrameHover?.(Number(item.frame)),
+              onBlur: () => onFrameHover?.(null),
+            };
+            return (
+              <li key={item.frame} className="border-b border-ash/25">
+                {isRoute ? (
+                  <Link to={item.href} {...rowProps}>
+                    {rowContent}
+                  </Link>
+                ) : (
+                  <a
+                    href={item.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollToTarget(item.href);
+                    }}
+                    {...rowProps}
+                  >
+                    {rowContent}
+                  </a>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </nav>
+
+      <div className="flex flex-wrap gap-4">
+        <LinkButton
+          href="#work"
+          variant="primary"
+          onClick={(e) => {
+            e.preventDefault();
+            scrollToTarget("#work");
+          }}
+        >
+          View Featured Work
+        </LinkButton>
+        <LinkButton href={profile.resumeUrl} variant="ghost-dark" download>
+          Download Resume ↓
+        </LinkButton>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-5">
+        {socials.map((social, i) => (
+          <Fragment key={social.label}>
+            {i > 0 && <span className="h-[3px] w-[3px] shrink-0 rounded-full bg-ash" aria-hidden="true" />}
+            <a
+              href={social.href}
+              target={social.href.startsWith("mailto:") ? undefined : "_blank"}
+              rel={social.href.startsWith("mailto:") ? undefined : "noreferrer"}
+              className="font-hud text-tag uppercase tracking-[0.08em] text-ash transition-colors hover:text-orange-deep"
+            >
+              {social.label}
+            </a>
+          </Fragment>
+        ))}
+      </div>
     </div>
   );
 }

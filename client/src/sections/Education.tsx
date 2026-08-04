@@ -5,8 +5,7 @@ export function Education() {
   const ref = useDevelopReveal<HTMLElement>();
   return (
     <section ref={ref} id="education" className="px-6 py-24 sm:px-14">
-      <div className="mb-10 flex items-center gap-4">
-        <span className="font-hud text-hud text-orange">[04]</span>
+      <div className="mb-10">
         <h2 className="font-display text-h2 text-paper" style={{ fontWeight: 580 }}>
           Education
         </h2>
