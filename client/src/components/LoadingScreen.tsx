@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from "react";
+import { WaveDotField } from "./WaveDotField";
 
 const BAR_DURATION_MS = 2600;
 const IRIS_DURATION_MS = 650;
@@ -96,6 +97,7 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10 bg-ink">
+      <WaveDotField tone="dark" className="-z-10" />
       <span
         className="absolute left-6 top-6 font-hud text-tag uppercase tracking-[0.08em] text-paper sm:left-10 sm:top-10"
         aria-hidden="true"

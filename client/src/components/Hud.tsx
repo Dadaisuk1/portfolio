@@ -28,7 +28,7 @@ export function ScanLines() {
 }
 
 export function CornerBrackets() {
-  const common = "absolute w-5 h-5 border-paper/80";
+  const common = "absolute w-6 h-6 border-paper/80 sm:w-7 sm:h-7";
   return (
     <div
       className="pointer-events-none absolute inset-3 sm:inset-5"
@@ -42,19 +42,25 @@ export function CornerBrackets() {
   );
 }
 
+const REC_BLINK = "motion-safe:animate-[rec-pulse_1.2s_steps(1)_infinite]";
+
 export function RecDot({
   className = "",
   tone = "dark",
+  size = "tag",
 }: {
   className?: string;
   tone?: "dark" | "light";
+  size?: "tag" | "hud";
 }) {
   const textTone = tone === "light" ? "text-orange-deep" : "text-orange";
+  const dotSize = size === "hud" ? "h-2 w-2" : "h-1.5 w-1.5";
+  const textSize = size === "hud" ? "text-hud" : "text-tag";
   return (
     <div className={`flex items-center gap-2 ${className}`} aria-hidden="true">
-      <span className="h-1.5 w-1.5 rounded-full bg-orange motion-safe:animate-[rec-pulse_1.6s_ease-in-out_infinite]" />
+      <span className={`${dotSize} rounded-full bg-orange ${REC_BLINK}`} />
       <span
-        className={`font-hud text-tag tracking-[0.08em] uppercase ${textTone}`}
+        className={`font-hud ${textSize} tracking-[0.08em] uppercase ${REC_BLINK} ${textTone}`}
       >
         REC
       </span>
@@ -73,7 +79,7 @@ export function Timestamp({ className = "" }: { className?: string }) {
   )} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
   return (
     <span
-      className={`font-hud text-tag text-orange tracking-[0.04em] ${className}`}
+      className={`font-hud text-hud text-orange tracking-[0.04em] ${className}`}
       aria-hidden="true"
     >
       {stamp}
@@ -92,7 +98,7 @@ export function FrameCounter({
 }) {
   return (
     <span
-      className={`font-hud text-tag text-ash tracking-[0.04em] ${className}`}
+      className={`font-hud text-hud text-ash tracking-[0.04em] ${className}`}
       aria-hidden="true"
     >
       FRAME {pad(current)}/{pad(total)}

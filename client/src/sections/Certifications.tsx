@@ -4,6 +4,7 @@ import { useMagnetic } from "../hooks/useMagnetic";
 import { Aws } from "../components/icons/Aws";
 import { Ibm } from "../components/icons/Ibm";
 import { ImageWithSkeleton } from "../components/ImageWithSkeleton";
+import { WaveDotField } from "../components/WaveDotField";
 
 const CARD_MAGNETIC_OFFSET = 6;
 
@@ -55,8 +56,9 @@ export function Certifications() {
     <section
       ref={ref}
       id="certifications"
-      className="paper-grain border-t border-ink/10 bg-paper px-6 py-16 text-ink sm:px-14 sm:py-24"
+      className="paper-grain relative isolate border-t border-ink/10 bg-paper px-6 py-16 text-ink sm:px-14 sm:py-24"
     >
+      <WaveDotField tone="light" spacing={16} alphaScale={0.6} className="-z-10" />
       <div className="mx-auto flex max-w-[1400px] flex-col gap-7">
         <div className="flex flex-col gap-2 border-b border-ink/12 pb-7">
           <span className="font-hud text-tag uppercase tracking-[0.08em] text-orange">

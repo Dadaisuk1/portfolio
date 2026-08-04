@@ -1,6 +1,7 @@
 import { education, languages } from "../data/resume";
 import { useDevelopReveal } from "../hooks/useDevelopReveal";
 import { ImageWithSkeleton } from "../components/ImageWithSkeleton";
+import { WaveDotField } from "../components/WaveDotField";
 
 export function Education() {
   const ref = useDevelopReveal<HTMLElement>();
@@ -8,8 +9,9 @@ export function Education() {
     <section
       ref={ref}
       id="education"
-      className="border-t border-ash/20 px-6 py-16 sm:px-14 sm:py-24"
+      className="relative isolate border-t border-ash/20 px-6 py-16 sm:px-14 sm:py-24"
     >
+      <WaveDotField tone="dark" spacing={16} alphaScale={0.6} className="-z-10" />
       <div className="mx-auto flex max-w-[1400px] flex-col gap-10">
         <div className="flex flex-col items-start justify-between gap-4 border-b border-ash/20 pb-7 sm:flex-row sm:items-baseline">
           <div className="flex flex-col gap-2">
