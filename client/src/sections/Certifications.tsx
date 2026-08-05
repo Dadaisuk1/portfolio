@@ -1,5 +1,5 @@
 import { certifications, type Certification } from "../data/resume";
-import { useDevelopReveal } from "../hooks/useDevelopReveal";
+import { useScrollScaleReveal } from "../hooks/useScrollScaleReveal";
 import { useMagnetic } from "../hooks/useMagnetic";
 import { Aws } from "../components/icons/Aws";
 import { Ibm } from "../components/icons/Ibm";
@@ -52,10 +52,9 @@ function CredentialCard({ cert }: { cert: Certification }) {
 }
 
 export function Certifications() {
-  const ref = useDevelopReveal<HTMLElement>();
+  const gridRef = useScrollScaleReveal<HTMLDivElement>();
   return (
     <section
-      ref={ref}
       id="certifications"
       className="paper-grain relative isolate border-t border-ink/10 bg-paper px-6 py-16 text-ink sm:px-14 sm:py-24"
     >
@@ -69,7 +68,7 @@ export function Certifications() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div ref={gridRef} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {certifications.map((cert) => (
             <CredentialCard key={cert.name} cert={cert} />
           ))}

@@ -2,15 +2,11 @@ import { profile } from "../data/resume";
 import { LinkButton } from "./Button";
 import { RecDot } from "./Hud";
 import { Linkedin, Github, Gmail } from "./icons/Social";
-import { useDevelopReveal } from "../hooks/useDevelopReveal";
 
 export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
-  const ref = useDevelopReveal<HTMLElement>();
   return (
-    <footer
-      ref={ref}
-      className="paper-grain relative isolate border-t border-ink/10 bg-paper px-6 py-16 text-ink sm:px-14 sm:py-24"
-    >
+    <footer className="paper-grain relative isolate border-t border-ink/10 bg-paper px-6 py-16 text-ink sm:px-14 sm:py-24">
+
       <div className="mx-auto flex max-w-[1400px] flex-col gap-10">
         <div className="flex items-center gap-4">
           <RecDot tone="light" />

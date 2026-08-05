@@ -1,5 +1,6 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import { Renderer, Program, Triangle, Mesh, Texture } from "ogl";
+import { prefersReducedMotion } from "../lib/motion";
 import "../HalftoneReveal.css";
 
 type Mode = "mono" | "duotone" | "color";
@@ -245,10 +246,7 @@ export function HalftoneReveal({
     const container = containerRef.current;
     if (!container) return;
 
-    const reduced =
-      typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = prefersReducedMotion();
 
     const renderer = new Renderer({
       dpr: Math.min(window.devicePixelRatio || 1, 2),

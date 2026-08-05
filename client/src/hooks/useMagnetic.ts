@@ -1,8 +1,13 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { prefersReducedMotion } from "../lib/motion";
 
 const DEFAULT_MAX_OFFSET = 12;
 const PULL_STRENGTH = 0.4;
+
+function isDevMode(): boolean {
+  return typeof import.meta !== "undefined" && !!import.meta.env && !!import.meta.env.DEV;
+}
 
 /**
  * Cursor-follow "magnetic" pull, bounded to maxOffset px and eased back to
@@ -19,7 +24,7 @@ export function useMagnetic<T extends HTMLElement>(
   useEffect(() => {
     const el = ref.current;
     if (!el || !enabled) {
-      if (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.DEV) {
+      if (isDevMode()) {
         // eslint-disable-next-line no-console
         console.debug("useMagnetic: disabled or no element", { el, enabled });
       }
@@ -27,8 +32,8 @@ export function useMagnetic<T extends HTMLElement>(
     }
 
     // Respect reduced motion preferences.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      if (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.DEV) {
+    if (prefersReducedMotion()) {
+      if (isDevMode()) {
         // eslint-disable-next-line no-console
         console.debug("useMagnetic: prefers-reduced-motion is enabled");
       }
@@ -50,14 +55,14 @@ export function useMagnetic<T extends HTMLElement>(
     // devices report `hover: none` while still having a mouse — checking
     // `pointer: fine` is usually more reliable, but it can be overly strict.
     if (!TEMP_BYPASS_POINTER_CHECK && !forceEnable && !window.matchMedia("(pointer: fine)").matches) {
-      if (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.DEV) {
+      if (isDevMode()) {
         // eslint-disable-next-line no-console
         console.debug("useMagnetic: pointer is not fine (likely touch-only)");
       }
       return;
     }
 
-    if (forceEnable && typeof import.meta !== "undefined" && import.meta.env && import.meta.env.DEV) {
+    if (forceEnable && isDevMode()) {
       // eslint-disable-next-line no-console
       console.debug("useMagnetic: VITE_FORCE_MAGNETIC override enabled — forcing magnetic behavior");
     }

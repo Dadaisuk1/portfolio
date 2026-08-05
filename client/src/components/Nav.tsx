@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { profile } from "../data/resume";
-// import { RecDot } from "./Hud";
 import { LinkButton } from "./Button";
 import { Spinner } from "./Spinner";
 import { scrollToTarget } from "../lib/smoothScroll";
 import { useTextReveal } from "../hooks/useTextReveal";
 import { useMagnetic } from "../hooks/useMagnetic";
+import { useDismissOnOutsideOrEscape } from "../hooks/useDismissOnOutsideOrEscape";
 import { Linkedin, Github, Gmail } from "./icons/Social";
 import { LinkIcon } from "./icons/LinkIcon";
 import { Download } from "./icons/Download";
@@ -100,17 +100,15 @@ export function Nav({
   // close, matching ContactModal's existing pattern elsewhere in this app.
   // Only wired up while open — the Menu button that reopens it is hidden
   // (opacity-0 pointer-events-none) whenever Nav is open, so there's no
-  // trigger element to exclude here the way ContactModal has to. Tab is
-  // additionally trapped inside the panel so the background page — which
-  // stays in the DOM and un-inert below the fold — never picks up focus
-  // while this is meant to be the only thing on screen.
+  // trigger element to exclude here the way ContactModal has to.
+  useDismissOnOutsideOrEscape(open, [rootRef], () => onCollapse?.());
+
+  // Tab is trapped inside the panel so the background page — which stays in
+  // the DOM and un-inert below the fold — never picks up focus while this is
+  // meant to be the only thing on screen.
   useEffect(() => {
     if (!open) return;
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onCollapse?.();
-        return;
-      }
       if (e.key !== "Tab" || !rootRef.current) return;
       const focusables = rootRef.current.querySelectorAll<HTMLElement>(
         'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])',
@@ -126,17 +124,9 @@ export function Nav({
         first.focus();
       }
     };
-    const handleClickOutside = (e: MouseEvent) => {
-      if (rootRef.current?.contains(e.target as Node)) return;
-      onCollapse?.();
-    };
     document.addEventListener("keydown", handleKey);
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [open, onCollapse]);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [open]);
 
   return (
     <div
@@ -231,7 +221,11 @@ export function Nav({
             return (
               <li key={item.frame} className="border-b border-ash/25">
                 {isRoute ? (
-                  <Link to={item.href} onClick={() => onCollapse?.()} {...rowProps}>
+                  <Link
+                    to={item.href}
+                    onClick={() => onCollapse?.()}
+                    {...rowProps}
+                  >
                     {rowContent}
                   </Link>
                 ) : (
