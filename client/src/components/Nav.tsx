@@ -103,7 +103,9 @@ export function Nav({
           onExited?.();
         }
       }}
-      className={`paper-grain !absolute inset-4 z-20 flex min-w-0 flex-col justify-center gap-10 overflow-y-auto rounded-sm border border-ink/10 bg-paper px-6 py-16 text-ink shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)] transition-[opacity,transform] split:inset-y-10 split:right-10 split:left-auto split:w-[45%] split:px-14 ${
+      className={`paper-grain !absolute inset-4 z-20 flex min-w-0 flex-col justify-center gap-6 overflow-y-hidden rounded-sm border border-ink/10 bg-paper px-6 py-10 text-ink shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)] transition-[opacity,transform] split:inset-y-6 split:right-10 split:left-auto split:w-[45%] split:px-14 split:py-12 ${
+        open ? "" : "pointer-events-none"
+      } ${
         entered
           ? `translate-x-0 scale-100 opacity-100 ${ENTER_TRANSITION}`
           : `translate-x-3 scale-[0.98] opacity-0 ${EXIT_TRANSITION}`

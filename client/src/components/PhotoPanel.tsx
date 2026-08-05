@@ -97,7 +97,8 @@ export function PhotoPanel({
         follow={0.18}
         idleReveal={0}
         borderRadius="0px"
-        className="absolute inset-0"
+        className="!absolute inset-0"
+        style={{ contain: "layout paint" }}
       />
       <GrainFlicker active={hovering} />
 

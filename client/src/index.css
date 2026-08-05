@@ -56,7 +56,6 @@
   html {
     scroll-behavior: smooth;
     background: var(--color-ink);
-    overflow-x: hidden;
     overflow-anchor: none;
   }
 

@@ -197,7 +197,7 @@ export function HalftoneReveal({
   invert = false,
   revealRadius = 0.4,
   edge = 0.8,
-  follow = 0.37,
+  follow = 0.99,
   idleReveal = 0,
   trigger = "hover",
   borderRadius = "16px",
