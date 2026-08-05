@@ -4,6 +4,7 @@ import { Button } from "./Button";
 import { RecDot } from "./Hud";
 import { Spinner } from "./Spinner";
 import { useMagnetic } from "../hooks/useMagnetic";
+import { useDismissOnOutsideOrEscape } from "../hooks/useDismissOnOutsideOrEscape";
 
 const TRIGGER_MAGNETIC_OFFSET = 8;
 
@@ -34,23 +35,9 @@ export function ContactModal({
   useEffect(() => {
     if (!isOpen) return;
     firstFieldRef.current?.focus();
-
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
-    };
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (panelRef.current?.contains(target)) return;
-      if (triggerRef.current?.contains(target)) return;
-      setIsOpen(false);
-    };
-    document.addEventListener("keydown", handleKey);
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, [isOpen]);
+
+  useDismissOnOutsideOrEscape(isOpen, [panelRef, triggerRef], () => setIsOpen(false));
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
