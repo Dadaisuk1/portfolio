@@ -11,10 +11,7 @@ import { Certifications } from "../sections/Certifications";
 import { Footer } from "../components/Footer";
 import { useSmoothScroll } from "../hooks/useSmoothScroll";
 
-const TOTAL_FRAMES = 4;
-
 export function HomePage({ loading }: { loading: boolean }) {
-  const [hoveredFrame, setHoveredFrame] = useState<number | null>(null);
   const [heroExpanded, setHeroExpanded] = useState(false);
   // Stays mounted a beat longer than heroExpanded so the Nav panel can play
   // its ease-out exit before actually leaving the DOM.
@@ -56,17 +53,11 @@ export function HomePage({ loading }: { loading: boolean }) {
     <>
       <div inert={loading}>
         <section ref={heroRef} className="relative">
-          <PhotoPanel
-            currentFrame={hoveredFrame ?? 0}
-            totalFrames={TOTAL_FRAMES}
-            collapsed={!heroExpanded}
-            onExpand={openNav}
-          />
+          <PhotoPanel collapsed={!heroExpanded} onExpand={openNav} />
           {navRendered && (
             <Nav
               open={heroExpanded}
               onExited={() => setNavRendered(false)}
-              onFrameHover={setHoveredFrame}
               onCollapse={closeNav}
               onOpenContact={() => setContactModalOpen(true)}
             />

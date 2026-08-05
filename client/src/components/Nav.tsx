@@ -40,20 +40,20 @@ const roleWords = profile.role.split(" ");
 export function Nav({
   open = true,
   onExited,
-  onFrameHover,
   onCollapse,
   onOpenContact,
 }: {
   open?: boolean;
   onExited?: () => void;
-  onFrameHover?: (frame: number | null) => void;
   onCollapse?: () => void;
   onOpenContact?: () => void;
 }) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [entered, setEntered] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const headlineRef = useTextReveal<HTMLHeadingElement>();
+  const navListRef = useTextReveal<HTMLUListElement>();
   const closeRef = useMagnetic<HTMLButtonElement>(true);
 
   // Mount already in the closed pose, then flip to entered on the next
@@ -68,15 +68,63 @@ export function Nav({
     if (!open) setEntered(false);
   }, [open]);
 
+  // This is a full-viewport takeover, not an incidental popover — the page
+  // underneath shouldn't scroll or be reachable by keyboard while it's up.
+  // Locking only <html> (document.scrollingElement) isn't enough: once html
+  // can no longer scroll, the browser hands the scrollbar to <body> instead
+  // (it still has overflow content and an auto/visible overflow-y from the
+  // base styles), so the lock has to cover both to actually hold still.
+  useEffect(() => {
+    if (!open) return;
+    const html = document.documentElement;
+    const body = document.body;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      body.style.overflow = previousBodyOverflow;
+    };
+  }, [open]);
+
+  // Send focus into the panel the moment it opens — the button that
+  // triggered it (PhotoPanel's Menu button) goes inert as part of the same
+  // transition and would otherwise drop focus to <body>.
+  useEffect(() => {
+    if (!open) return;
+    closeRef.current?.focus();
+  }, [open]);
+
   // Floating-overlay behavior: click outside the card or press Escape to
   // close, matching ContactModal's existing pattern elsewhere in this app.
   // Only wired up while open — the Menu button that reopens it is hidden
   // (opacity-0 pointer-events-none) whenever Nav is open, so there's no
-  // trigger element to exclude here the way ContactModal has to.
+  // trigger element to exclude here the way ContactModal has to. Tab is
+  // additionally trapped inside the panel so the background page — which
+  // stays in the DOM and un-inert below the fold — never picks up focus
+  // while this is meant to be the only thing on screen.
   useEffect(() => {
     if (!open) return;
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCollapse?.();
+      if (e.key === "Escape") {
+        onCollapse?.();
+        return;
+      }
+      if (e.key !== "Tab" || !rootRef.current) return;
+      const focusables = rootRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     const handleClickOutside = (e: MouseEvent) => {
       if (rootRef.current?.contains(e.target as Node)) return;
@@ -158,34 +206,32 @@ export function Nav({
       </div>
 
       <nav aria-label="Primary">
-        <ul className="flex flex-col gap-1">
-          {items.map((item) => {
+        <ul ref={navListRef} className="flex flex-col">
+          {items.map((item, index) => {
             const isRoute = item.href.startsWith("/");
+            const dimmed = hoveredIndex !== null && hoveredIndex !== index;
             const rowContent = (
-              <>
-                <span className="font-hud text-hud text-orange-deep">
-                  [{item.frame}]
-                </span>
-                <span
-                  className="font-display text-h3 text-ink group-hover:text-orange-deep group-focus-visible:text-orange-deep"
-                  style={{ fontWeight: 580 }}
-                >
-                  {item.label}
-                </span>
-              </>
+              <span
+                className={`font-display text-h3 tracking-tight transition-colors duration-300 ease-out group-hover:text-orange-deep group-focus-visible:text-orange-deep lg:text-h2 ${
+                  dimmed ? "text-ash-deep" : "text-ink"
+                }`}
+                style={{ fontWeight: 460 }}
+              >
+                {item.label}
+              </span>
             );
             const rowProps = {
               className:
-                "group flex items-center gap-4 py-4 cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep hover:text-orange-deep",
-              onMouseEnter: () => onFrameHover?.(Number(item.frame)),
-              onMouseLeave: () => onFrameHover?.(null),
-              onFocus: () => onFrameHover?.(Number(item.frame)),
-              onBlur: () => onFrameHover?.(null),
+                "group flex items-center py-5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep",
+              onMouseEnter: () => setHoveredIndex(index),
+              onMouseLeave: () => setHoveredIndex(null),
+              onFocus: () => setHoveredIndex(index),
+              onBlur: () => setHoveredIndex(null),
             };
             return (
               <li key={item.frame} className="border-b border-ash/25">
                 {isRoute ? (
-                  <Link to={item.href} {...rowProps}>
+                  <Link to={item.href} onClick={() => onCollapse?.()} {...rowProps}>
                     {rowContent}
                   </Link>
                 ) : (
@@ -193,6 +239,7 @@ export function Nav({
                     href={item.href}
                     onClick={(e) => {
                       e.preventDefault();
+                      onCollapse?.();
                       scrollToTarget(item.href);
                     }}
                     {...rowProps}
@@ -214,6 +261,7 @@ export function Nav({
           forceMagnetic
           onClick={(e) => {
             e.preventDefault();
+            onCollapse?.();
             scrollToTarget("#work");
           }}
         >

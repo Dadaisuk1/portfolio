@@ -57,6 +57,12 @@
     scroll-behavior: smooth;
     background: var(--color-ink);
     overflow-anchor: none;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* legacy Edge/IE */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/WebKit */
   }
 
   body {
@@ -121,17 +127,6 @@
     background-blend-mode: lighten;
     mix-blend-mode: multiply;
     opacity: 0.9;
-  }
-}
-
-@keyframes rec-pulse {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0.15;
   }
 }
 

@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { CornerBrackets, FrameCounter, RecDot, Timestamp } from "./Hud";
 import { GrainFlicker } from "./GrainFlicker";
 // import { WaveField } from "./WaveField";
 import { HalftoneReveal } from "./HalftoneReveal";
@@ -7,13 +6,9 @@ import { type CursorPoint } from "./DotGridBackground";
 import { useMagnetic } from "../hooks/useMagnetic";
 
 export function PhotoPanel({
-  currentFrame = 0,
-  totalFrames = 1,
   collapsed = false,
   onExpand,
 }: {
-  currentFrame?: number;
-  totalFrames?: number;
   collapsed?: boolean;
   onExpand?: () => void;
 }) {
@@ -148,16 +143,6 @@ export function PhotoPanel({
         />
         <span className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange" />
       </div> */}
-
-      <CornerBrackets size="lg" />
-      <RecDot size="lg" className="absolute left-6 top-6 sm:left-8 sm:top-8" />
-      <Timestamp size="lg" className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8" />
-      <FrameCounter
-        current={currentFrame}
-        total={totalFrames}
-        size="lg"
-        className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8"
-      />
 
       {/* always mounted (visibility toggled via CSS, not conditional render) so the
           magnetic pointer listeners attached on mount never get orphaned by an
