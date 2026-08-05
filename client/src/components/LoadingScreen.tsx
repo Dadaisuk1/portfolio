@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { HalftoneReveal } from "./HalftoneReveal";
+import { prefersReducedMotion } from "../lib/motion";
 
 const DURATION_MS = 2600;
 const EXIT_DURATION_MS = 1200;
@@ -12,9 +13,7 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const reduced = prefersReducedMotion();
 
     if (reduced) {
       onDone();

@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from "react";
+import { prefersReducedMotion } from "../lib/motion";
 
 const FLICKER_INTERVAL_MS = 120;
 
@@ -13,7 +14,7 @@ export function GrainFlicker({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (!active) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
 
     const interval = setInterval(() => {
       setSeed(Math.floor(Math.random() * 100));

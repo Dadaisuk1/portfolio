@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import { prefersReducedMotion } from "../lib/motion";
 
 /**
  * Staggers the immediate children of the returned ref in on mount — a
@@ -14,7 +15,7 @@ export function useTextReveal<T extends HTMLElement>() {
   useGSAP(
     () => {
       if (!ref.current) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (prefersReducedMotion()) return;
 
       gsap.fromTo(
         ref.current.children,

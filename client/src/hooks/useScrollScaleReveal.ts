@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { prefersReducedMotion } from "../lib/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -13,8 +14,8 @@ const MAX_STAGGER_DELAY = 0.3;
  * same tween when it scrolls back out — unlike the site's one-shot "develop"
  * reveals, this replays every time an item re-enters, the way React Bits'
  * AnimatedList drives its rows off `useInView({ triggerOnce: false })`. Built
- * on a ScrollTrigger per item instead of the `motion` package, since GSAP +
- * Lenis is already this site's scroll-motion engine (see design.md §08).
+ * on a ScrollTrigger per item instead of the `motion` package, since GSAP is
+ * already this site's scroll-motion engine.
  */
 export function useScrollScaleReveal<T extends HTMLElement>(childSelector?: string) {
   const ref = useRef<T>(null);
@@ -22,8 +23,7 @@ export function useScrollScaleReveal<T extends HTMLElement>(childSelector?: stri
   useGSAP(
     () => {
       if (!ref.current) return;
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduced) return;
+      if (prefersReducedMotion()) return;
 
       const targets = childSelector
         ? ref.current.querySelectorAll(childSelector)
