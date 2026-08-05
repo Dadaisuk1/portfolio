@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { profile } from "../data/resume";
-import { RecDot } from "./Hud";
+// import { RecDot } from "./Hud";
 import { LinkButton } from "./Button";
 import { Spinner } from "./Spinner";
 import { scrollToTarget } from "../lib/smoothScroll";
@@ -14,7 +14,10 @@ import { Download } from "./icons/Download";
 const DOWNLOAD_FEEDBACK_MS = 700;
 
 // Ease-out on the way in (a confident, slightly slower arrival), ease-in on
-// the way out (quicker — an exit shouldn't make the visitor wait).
+// the way out (quicker — an exit shouldn't make the visitor wait). Nav now
+// floats as an overlay above a photo panel that never resizes, so this only
+// ever has to animate opacity/transform — no more syncing against a sibling's
+// width transition.
 const ENTER_TRANSITION = "duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
 const EXIT_TRANSITION = "duration-[220ms] ease-[cubic-bezier(0.4,0,1,1)]";
 
@@ -65,28 +68,54 @@ export function Nav({
     if (!open) setEntered(false);
   }, [open]);
 
+  // Floating-overlay behavior: click outside the card or press Escape to
+  // close, matching ContactModal's existing pattern elsewhere in this app.
+  // Only wired up while open — the Menu button that reopens it is hidden
+  // (opacity-0 pointer-events-none) whenever Nav is open, so there's no
+  // trigger element to exclude here the way ContactModal has to.
+  useEffect(() => {
+    if (!open) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCollapse?.();
+    };
+    const handleClickOutside = (e: MouseEvent) => {
+      if (rootRef.current?.contains(e.target as Node)) return;
+      onCollapse?.();
+    };
+    document.addEventListener("keydown", handleKey);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open, onCollapse]);
+
   return (
     <div
       ref={rootRef}
       inert={!open}
       onTransitionEnd={(e) => {
-        if (e.target === rootRef.current && e.propertyName === "opacity" && !open) {
+        if (
+          e.target === rootRef.current &&
+          e.propertyName === "opacity" &&
+          !open
+        ) {
           onExited?.();
         }
       }}
-      className={`paper-grain relative flex min-w-0 flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink transition-[opacity,transform] split:min-h-screen split:flex-1 split:px-14 ${
+      className={`paper-grain !absolute inset-4 z-20 flex min-w-0 flex-col justify-center gap-10 overflow-y-auto rounded-sm border border-ink/10 bg-paper px-6 py-16 text-ink shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)] transition-[opacity,transform] split:inset-y-10 split:right-10 split:left-auto split:w-[45%] split:px-14 ${
         entered
-          ? `translate-x-0 opacity-100 ${ENTER_TRANSITION}`
-          : `translate-x-4 opacity-0 ${EXIT_TRANSITION}`
+          ? `translate-x-0 scale-100 opacity-100 ${ENTER_TRANSITION}`
+          : `translate-x-3 scale-[0.98] opacity-0 ${EXIT_TRANSITION}`
       }`}
     >
       <button
         ref={closeRef}
         type="button"
         onClick={onCollapse}
-        className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-4 py-2.5 cursor-pointer transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
+        className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-5 py-3 cursor-pointer transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
       >
-        <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+        <svg width="12" height="12" viewBox="0 0 10 10" aria-hidden="true">
           <path
             d="M1 1 L9 9 M9 1 L1 9"
             fill="none"
@@ -94,15 +123,14 @@ export function Nav({
             strokeWidth="1.4"
           />
         </svg>
-        <span className="font-hud text-tag uppercase tracking-[0.08em]">
+        <span className="font-hud text-hud uppercase tracking-[0.08em]">
           Close
         </span>
       </button>
 
       <div>
         <div className="mb-4 flex items-center gap-4">
-          <RecDot tone="light" />
-          <span className="font-hud text-tag uppercase tracking-[0.08em] text-ink/70">
+          <span className="font-hud text-hud font-medium uppercase tracking-[0.08em] text-ink/80">
             Open to internships
           </span>
         </div>
@@ -122,9 +150,8 @@ export function Nav({
           ))}
         </h1>
         <p className="mt-6 max-w-md font-body text-body-lg text-ink/70">
-          {profile.name} — takes Figma to shipped, production React, end
-          to end. The result: a frontend hire who ships real features, not
-          prototypes.
+          {profile.name} — takes Figma to shipped, production React, end to end.
+          The result: a frontend hire who ships real features, not prototypes.
         </p>
       </div>
 

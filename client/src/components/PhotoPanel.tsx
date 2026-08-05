@@ -1,11 +1,10 @@
 import { useState, useRef } from "react";
 import { CornerBrackets, FrameCounter, RecDot, Timestamp } from "./Hud";
 import { GrainFlicker } from "./GrainFlicker";
-import { WaveField } from "./WaveField";
-import { DotGridBackground, type CursorPoint } from "./DotGridBackground";
+// import { WaveField } from "./WaveField";
+import { HalftoneReveal } from "./HalftoneReveal";
+import { type CursorPoint } from "./DotGridBackground";
 import { useMagnetic } from "../hooks/useMagnetic";
-
-const FALLBACK_SRC = "/assets/cit.png";
 
 export function PhotoPanel({
   currentFrame = 0,
@@ -19,8 +18,6 @@ export function PhotoPanel({
   onExpand?: () => void;
 }) {
   const [hovering, setHovering] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [imgSrc, setImgSrc] = useState("/assets/me.svg");
   const ref = useRef<HTMLDivElement | null>(null);
   const cursorRef = useRef<CursorPoint>({ x: -9999, y: -9999, active: false });
   const expandRef = useMagnetic<HTMLButtonElement>(true);
@@ -46,9 +43,7 @@ export function PhotoPanel({
   return (
     <div
       ref={ref}
-      className={`grain relative h-[70vh] shrink-0 overflow-hidden transition-[width] duration-[380ms] ease-[cubic-bezier(0.16,1,0.3,1)] split:h-screen ${
-        collapsed ? "w-full" : "w-full split:w-[45%]"
-      }`}
+      className="grain relative h-dvh w-full overflow-hidden"
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={releasePoint}
       onMouseMove={(e) => {
@@ -77,63 +72,51 @@ export function PhotoPanel({
         ["--my" as any]: "-999px",
       }}
     >
-      <div className="absolute inset-0 bg-ink" />
-      <DotGridBackground cursorRef={cursorRef} spacing={16} dotSize={2} />
+      {/* <div className="absolute inset-0 bg-ink" /> */}
+      {/* <DotGridBackground cursorRef={cursorRef} spacing={16} dotSize={2} /> */}
       {/* wave-signal texture - the site's recurring halftone asset, placed
           full-bleed and screen-blended straight onto the dot field below so
           the panel ties into the rest of the site's texture language instead
           of standing apart in plain white. */}
-      <WaveField tone="dark" className="opacity-5" />
+      {/* <WaveField tone="dark" className="opacity-5" /> */}
 
-      {/* spotlight image layer - revealed only inside the radial mask at the cursor/touch point.
-          The mask lives on this full-bleed wrapper (so --mx/--my line up with the cursor
-          regardless of panel width); the photo itself is pinned to a height-bound square
-          inside it so it's never upscaled past its native ~600px resolution, letterboxed
-          by the ink base layer instead of stretching edge-to-edge and turning to mush. */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          WebkitMaskImage:
-            "radial-gradient(circle 16rem at var(--mx) var(--my), black 0%, rgba(0,0,0,0.58) 25%, rgba(0,0,0,0.29) 50%, rgba(0,0,0,0.09) 75%, transparent 100%)",
-          maskImage:
-            "radial-gradient(circle 16rem at var(--mx) var(--my), black 0%, rgba(0,0,0,0.58) 25%, rgba(0,0,0,0.29) 50%, rgba(0,0,0,0.09) 75%, transparent 100%)",
-          WebkitMaskRepeat: "no-repeat",
-          maskRepeat: "no-repeat",
-        }}
-      >
-        <img
-          src={imgSrc}
-          alt="Darwin Darryl Jean E. Largoza"
-          onLoad={() => setLoaded(true)}
-          onError={() => {
-            if (imgSrc !== FALLBACK_SRC) setImgSrc(FALLBACK_SRC);
-          }}
-          className={`absolute left-1/2 top-0 aspect-square h-full w-auto -translate-x-1/2 object-cover transition-opacity duration-150 ${
-            loaded ? "opacity-100" : "opacity-0"
-          }`}
-          style={{
-            filter: "sepia(0.3) saturate(0.75) contrast(1.08) brightness(0.97)",
-          }}
-        />
-      </div>
+      {/* halftone reveal - the photo is screened into an ink/paper halftone print by
+          default (WebGL), and comes into sharp focus in a loupe around the cursor or
+          touch point, echoing the darkroom "develop" motif and the discoverability
+          hint below far more literally than the old CSS mask ever did. */}
+      <HalftoneReveal
+        src="/assets/colored.svg"
+        inkColor="#11100b"
+        paperColor="#f5f2ea"
+        mode="mono"
+        dotDensity={80}
+        angle={34}
+        revealRadius={0.4}
+        contrast={1.1}
+        edge={0.72}
+        follow={0.18}
+        idleReveal={0}
+        borderRadius="0px"
+        className="absolute inset-0"
+      />
       <GrainFlicker active={hovering} />
 
       {/* lens vignette - permanent edge falloff, same optical signature as the
           fisheye bulge in the dot field: reads as glass in front of the frame
           rather than a flat color layer */}
-      <div
+      {/* <div
         className="pointer-events-none absolute inset-0"
         aria-hidden="true"
         style={{
           background:
             "radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.62) 100%)",
         }}
-      />
+      /> */}
 
       {/* viewfinder reticle - concentric rangefinder rings bowed by the same
           fisheye curve as the dot field, so the "glass" reads consistent
           across both the ambient grid and its frame lines */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      {/* <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <span
           className="absolute inset-0 m-auto rounded-[46%] border border-paper/[0.07]"
           style={{ width: "128%", height: "112%" }}
@@ -142,12 +125,12 @@ export function PhotoPanel({
           className="absolute inset-0 m-auto rounded-[48%] border border-paper/[0.05]"
           style={{ width: "94%", height: "82%" }}
         />
-      </div>
+      </div> */}
 
       {/* soft light source that tracks the cursor/touch point - a warm glow
           spreading from a single point, echoing the same gradual falloff as
           the reveal mask, rather than a hard-edged viewfinder aim-point */}
-      <div
+      {/* <div
         aria-hidden="true"
         className="pointer-events-none absolute left-0 top-0 h-72 w-72 transition-opacity duration-300"
         style={{
@@ -163,78 +146,43 @@ export function PhotoPanel({
           }}
         />
         <span className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange" />
-      </div>
+      </div> */}
 
-      {/* discoverability hint - signals a hidden photo without revealing it; fades out once hovering/touching */}
-      <div
-        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 transition-opacity duration-300"
-        style={{ opacity: hovering ? 0 : 1 }}
-        aria-hidden="true"
-      >
-        <span className="relative flex h-16 w-16 items-center justify-center rounded-full border border-paper/30">
-          <span className="h-2 w-2 rounded-full bg-orange motion-safe:animate-[rec-pulse_1.2s_steps(1)_infinite]" />
-        </span>
-        <span className="font-hud text-hud uppercase tracking-[0.14em] text-paper/50">
-          Move or touch to develop
-        </span>
-      </div>
-
-      {!collapsed && (
-        <div
-          className="absolute right-6 top-6 flex flex-col items-end gap-1 sm:right-8 sm:top-8"
-          aria-hidden="true"
-        >
-          <span className="font-hud text-hud text-ash tracking-[0.04em]">
-            50MM · F/2.8
-          </span>
-          <span className="font-hud text-tag text-ash/50 tracking-[0.04em]">
-            1/125 · ISO 200
-          </span>
-        </div>
-      )}
-
-      {/* vertical graphic label - fills the dead field down the left edge so
-          the frame reads as an instrument, not empty space around one photo */}
-      <span
-        className="pointer-events-none absolute left-3 top-1/2 hidden font-hud text-tag uppercase tracking-[0.3em] text-paper/[0.14] sm:left-4 sm:block"
-        style={{ writingMode: "vertical-rl", transform: "translateY(-50%) rotate(180deg)" }}
-        aria-hidden="true"
-      >
-        Manual Focus · Wide Open
-      </span>
-
-      <CornerBrackets />
-      <RecDot
-        size="hud"
-        className="absolute left-6 top-6 sm:left-8 sm:top-8"
-      />
-      <Timestamp className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8" />
+      <CornerBrackets size="lg" />
+      <RecDot size="lg" className="absolute left-6 top-6 sm:left-8 sm:top-8" />
+      <Timestamp size="lg" className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8" />
       <FrameCounter
         current={currentFrame}
         total={totalFrames}
+        size="lg"
         className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8"
       />
 
-      {collapsed && (
-        <button
-          ref={expandRef}
-          type="button"
-          onClick={onExpand}
-          className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-paper/60 px-4 py-2.5 transition-colors hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:right-8 sm:top-8 cursor-pointer"
-        >
-          <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true">
-            <path
-              d="M0 1 H14 M0 5 H14 M0 9 H14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.4"
-            />
-          </svg>
-          <span className="font-hud text-tag uppercase tracking-[0.08em] text-paper">
-            Menu
-          </span>
-        </button>
-      )}
+      {/* always mounted (visibility toggled via CSS, not conditional render) so the
+          magnetic pointer listeners attached on mount never get orphaned by an
+          unmount/remount cycle every time the panel collapses/expands */}
+      <button
+        ref={expandRef}
+        type="button"
+        onClick={onExpand}
+        inert={!collapsed}
+        aria-hidden={!collapsed}
+        className={`absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-paper/70 bg-ink/70 px-5 py-3 shadow-[0_2px_16px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-[opacity,background-color] duration-200 hover:bg-ink/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:right-8 sm:top-8 cursor-pointer ${
+          collapsed ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <svg width="16" height="12" viewBox="0 0 14 10" aria-hidden="true">
+          <path
+            d="M0 1 H14 M0 5 H14 M0 9 H14"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          />
+        </svg>
+        <span className="font-hud text-hud uppercase tracking-[0.08em] text-paper">
+          Menu
+        </span>
+      </button>
     </div>
   );
 }
