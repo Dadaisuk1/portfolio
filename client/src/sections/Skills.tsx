@@ -1,14 +1,11 @@
 import { currentlyExpanding, techStack } from "../data/resume";
 import { techIcons } from "../components/icons/techIconMap";
-import { useDevelopReveal } from "../hooks/useDevelopReveal";
-import { useStaggerReveal } from "../hooks/useStaggerReveal";
+import { useScrollScaleReveal } from "../hooks/useScrollScaleReveal";
 
 export function Skills() {
-  const ref = useDevelopReveal<HTMLElement>();
-  const gridRef = useStaggerReveal<HTMLDivElement>("[data-reveal-item]");
+  const gridRef = useScrollScaleReveal<HTMLDivElement>("[data-reveal-item]");
   return (
     <section
-      ref={ref}
       id="skills"
       className="relative isolate bg-ink px-6 py-16 text-paper sm:px-14 sm:py-24"
     >

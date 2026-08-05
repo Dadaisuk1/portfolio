@@ -162,7 +162,7 @@ export function PhotoPanel({
         onClick={onExpand}
         inert={!collapsed}
         aria-hidden={!collapsed}
-        className={`absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-paper/70 bg-ink/70 px-5 py-3 shadow-[0_2px_16px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-[opacity,background-color] duration-200 hover:bg-ink/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:right-8 sm:top-8 cursor-pointer ${
+        className={`absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-paper/70 bg-ink/70 px-6 py-3 shadow-[0_2px_16px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-[opacity,background-color] duration-200 hover:bg-ink/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:right-8 sm:top-8 cursor-pointer ${
           collapsed ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >

@@ -1,16 +1,15 @@
 import { projects } from "../data/resume";
-import { useDevelopReveal } from "../hooks/useDevelopReveal";
+import { useScrollScaleReveal } from "../hooks/useScrollScaleReveal";
 import { ArrowUpRight } from "../components/icons/ArrowUpRight";
 
 export function Work() {
-  const ref = useDevelopReveal<HTMLElement>();
+  const listRef = useScrollScaleReveal<HTMLDivElement>("article");
   return (
     <section
-      ref={ref}
       id="work"
       className="paper-grain relative isolate border-t border-ink/10 bg-paper px-6 py-16 text-ink sm:px-14 sm:py-24"
     >
-      <div className="mx-auto flex max-w-[1400px] flex-col">
+      <div ref={listRef} className="mx-auto flex max-w-[1400px] flex-col">
         <div className="flex flex-col items-start justify-between gap-6 border-b border-ink/12 pb-7 sm:flex-row sm:items-baseline">
           <div className="flex flex-col gap-2">
             <span className="font-hud text-tag uppercase tracking-[0.08em] text-orange">

@@ -1,13 +1,12 @@
 import { education, languages } from "../data/resume";
-import { useDevelopReveal } from "../hooks/useDevelopReveal";
+import { useScrollScaleReveal } from "../hooks/useScrollScaleReveal";
 import { ImageWithSkeleton } from "../components/ImageWithSkeleton";
 import { ArrowUpRight } from "../components/icons/ArrowUpRight";
 
 export function Education() {
-  const ref = useDevelopReveal<HTMLElement>();
+  const languagesRef = useScrollScaleReveal<HTMLDivElement>();
   return (
     <section
-      ref={ref}
       id="education"
       className="relative isolate border-t border-ash/20 px-6 py-16 sm:px-14 sm:py-24"
     >
@@ -65,7 +64,7 @@ export function Education() {
             <span className="font-hud text-tag uppercase tracking-[0.08em] text-ash">
               Languages
             </span>
-            <div className="flex flex-wrap gap-2">
+            <div ref={languagesRef} className="flex flex-wrap gap-2">
               {languages.map((lang) => (
                 <span
                   key={lang}

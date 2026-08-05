@@ -5,7 +5,7 @@ export const profile = {
   email: "darwindarryljean.largoza@gmail.com",
   // phone: "+63-995-662-7081",
   linkedin: "https://www.linkedin.com/in/ddjl/",
-  github: "https://github.com/Dadaisuk1",
+  github: "https://github.com/iamjpxfrd",
   resumeUrl: "/resume.pdf",
   bio: "4th-year IT student turning Figma files into production React — full-stack across React, Node.js, and Django, AWS-certified, and comfortable owning a project end to end.",
 };

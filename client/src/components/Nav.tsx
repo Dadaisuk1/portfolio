@@ -231,7 +231,11 @@ export function Nav({
             return (
               <li key={item.frame} className="border-b border-ash/25">
                 {isRoute ? (
-                  <Link to={item.href} onClick={() => onCollapse?.()} {...rowProps}>
+                  <Link
+                    to={item.href}
+                    onClick={() => onCollapse?.()}
+                    {...rowProps}
+                  >
                     {rowContent}
                   </Link>
                 ) : (
