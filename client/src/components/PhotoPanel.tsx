@@ -144,6 +144,15 @@ export function PhotoPanel({
         <span className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange" />
       </div> */}
 
+      {/* single identity mark — a plain wordmark in the corner, no theme
+          chrome attached to it */}
+      <span
+        aria-hidden="true"
+        className="absolute left-6 top-6 font-hud text-hud tracking-[0.04em] text-paper/80 sm:left-8 sm:top-8"
+      >
+        iamjpxfrd
+      </span>
+
       {/* always mounted (visibility toggled via CSS, not conditional render) so the
           magnetic pointer listeners attached on mount never get orphaned by an
           unmount/remount cycle every time the panel collapses/expands */}
