@@ -16,18 +16,28 @@ const TOTAL_FRAMES = 5;
 export function HomePage({ loading }: { loading: boolean }) {
   const [hoveredFrame, setHoveredFrame] = useState<number | null>(null);
   const [heroExpanded, setHeroExpanded] = useState(true);
+  // Stays mounted a beat longer than heroExpanded so the Nav panel can play
+  // its ease-out exit before actually leaving the DOM.
+  const [navRendered, setNavRendered] = useState(true);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   useSmoothScroll(!loading);
 
-  // Toggling the hero mounts/unmounts the whole Nav panel, which changes
-  // page height — keep GSAP's cached measurements in sync so scroll math
-  // doesn't go stale.
+  // Nav mounting/unmounting changes page height — keep GSAP's cached
+  // measurements in sync so scroll math doesn't go stale. Tied to
+  // navRendered (not heroExpanded) since that's when the DOM actually
+  // changes, i.e. once the exit transition has finished.
   useEffect(() => {
     const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
     return () => cancelAnimationFrame(raf);
-  }, [heroExpanded]);
+  }, [navRendered]);
+
+  const openNav = () => {
+    setNavRendered(true);
+    setHeroExpanded(true);
+  };
+  const closeNav = () => setHeroExpanded(false);
 
   // The hero is the only place nav lives — surface a way back once it's
   // scrolled out of view, since there's otherwise no persistent nav.
@@ -53,12 +63,14 @@ export function HomePage({ loading }: { loading: boolean }) {
             currentFrame={hoveredFrame ?? 0}
             totalFrames={TOTAL_FRAMES}
             collapsed={!heroExpanded}
-            onExpand={() => setHeroExpanded(true)}
+            onExpand={openNav}
           />
-          {heroExpanded && (
+          {navRendered && (
             <Nav
+              open={heroExpanded}
+              onExited={() => setNavRendered(false)}
               onFrameHover={setHoveredFrame}
-              onCollapse={() => setHeroExpanded(false)}
+              onCollapse={closeNav}
               onOpenContact={() => setContactModalOpen(true)}
             />
           )}

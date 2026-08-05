@@ -1,4 +1,7 @@
 import { scrollToTop } from "../lib/smoothScroll";
+import { useMagnetic } from "../hooks/useMagnetic";
+
+const MAGNETIC_OFFSET = 8;
 
 export function BackToTop({
   visible,
@@ -7,8 +10,10 @@ export function BackToTop({
   visible: boolean;
   onNavigate?: () => void;
 }) {
+  const ref = useMagnetic<HTMLButtonElement>(true, MAGNETIC_OFFSET);
   return (
     <button
+      ref={ref}
       type="button"
       onClick={() => {
         scrollToTop();

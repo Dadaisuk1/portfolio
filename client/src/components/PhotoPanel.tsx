@@ -3,6 +3,7 @@ import { CornerBrackets, FrameCounter, RecDot, Timestamp } from "./Hud";
 import { GrainFlicker } from "./GrainFlicker";
 import { WaveField } from "./WaveField";
 import { DotGridBackground, type CursorPoint } from "./DotGridBackground";
+import { useMagnetic } from "../hooks/useMagnetic";
 
 const FALLBACK_SRC = "/assets/cit.png";
 
@@ -22,6 +23,7 @@ export function PhotoPanel({
   const [imgSrc, setImgSrc] = useState("/assets/me.svg");
   const ref = useRef<HTMLDivElement | null>(null);
   const cursorRef = useRef<CursorPoint>({ x: -9999, y: -9999, active: false });
+  const expandRef = useMagnetic<HTMLButtonElement>(true);
 
   const trackPoint = (x: number, y: number) => {
     cursorRef.current.x = x;
@@ -44,7 +46,7 @@ export function PhotoPanel({
   return (
     <div
       ref={ref}
-      className={`grain relative h-[70vh] shrink-0 overflow-hidden split:h-screen ${
+      className={`grain relative h-[70vh] shrink-0 overflow-hidden transition-[width] duration-[380ms] ease-[cubic-bezier(0.16,1,0.3,1)] split:h-screen ${
         collapsed ? "w-full" : "w-full split:w-[45%]"
       }`}
       onMouseEnter={() => setHovering(true)}
@@ -215,6 +217,7 @@ export function PhotoPanel({
 
       {collapsed && (
         <button
+          ref={expandRef}
           type="button"
           onClick={onExpand}
           className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-paper/60 px-4 py-2.5 transition-colors hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange sm:right-8 sm:top-8 cursor-pointer"

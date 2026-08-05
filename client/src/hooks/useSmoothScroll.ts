@@ -15,26 +15,31 @@ export function useSmoothScroll(enabled: boolean) {
     const lenis = new Lenis({
       duration: reduced ? 0 : 1.2,
       smoothWheel: !reduced,
+      // Let Lenis drive its own rAF loop instead of piggybacking on
+      // gsap.ticker — the manual hand-off was the flakiness: wheel-driven
+      // scroll depended on that tick firing correctly every frame, while
+      // lenis.scrollTo() (used by nav links / back-to-top) animates fine
+      // regardless since it only needs raf to be running at all, which is
+      // why clicks worked but the ambient wheel smoothing didn't.
+      autoRaf: true,
+      allowNestedScroll: true,
+      // Recompute scroll limits live rather than relying on cached
+      // ResizeObserver dimensions — this page's height shifts continuously
+      // (Nav open/close transition, blur-in scroll reveals, web fonts),
+      // and a stale cached limit is exactly what would make wheel scroll
+      // feel stuck or partial while a one-shot scrollTo() still lands fine.
+      naiveDimensions: true,
+      stopInertiaOnNavigate: true,
     });
     setLenis(lenis);
 
     lenis.on("scroll", ScrollTrigger.update);
-
-    // Standard Lenis + GSAP integration: drive Lenis's raf off gsap.ticker
-    // (seconds since start, so *1000 for the ms Lenis expects) instead of a
-    // separate requestAnimationFrame loop, and disable GSAP's own lag
-    // smoothing so it doesn't fight Lenis's easing.
-    const tick = (time: number) => lenis.raf(time * 1000);
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
 
     // Layout settles a beat after mount (fonts, images) — refresh once it does.
     const refresh = requestAnimationFrame(() => ScrollTrigger.refresh());
 
     return () => {
       cancelAnimationFrame(refresh);
-      gsap.ticker.remove(tick);
-      gsap.ticker.lagSmoothing(1);
       lenis.destroy();
       setLenis(null);
     };
