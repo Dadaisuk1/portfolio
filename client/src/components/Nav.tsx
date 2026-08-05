@@ -7,8 +7,9 @@ import { Spinner } from "./Spinner";
 import { scrollToTarget } from "../lib/smoothScroll";
 import { useTextReveal } from "../hooks/useTextReveal";
 import { useMagnetic } from "../hooks/useMagnetic";
-import { ArrowUpRight } from "./icons/ArrowUpRight";
 import { Linkedin, Github, Gmail } from "./icons/Social";
+import { LinkIcon } from "./icons/LinkIcon";
+import { Download } from "./icons/Download";
 
 const DOWNLOAD_FEEDBACK_MS = 700;
 
@@ -204,14 +205,26 @@ export function Nav({
             );
           }}
         >
-          {isDownloading ? (
-            <>
+          <span className="grid">
+            <span
+              aria-hidden={isDownloading}
+              className={`col-start-1 row-start-1 flex items-center gap-2 transition-opacity ${
+                isDownloading ? "opacity-0" : "opacity-100"
+              }`}
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              Download Resume
+            </span>
+            <span
+              aria-hidden={!isDownloading}
+              className={`col-start-1 row-start-1 flex items-center gap-2 transition-opacity ${
+                isDownloading ? "opacity-100" : "opacity-0"
+              }`}
+            >
               <Spinner />
               Downloading…
-            </>
-          ) : (
-            "Download Resume ↓"
-          )}
+            </span>
+          </span>
         </LinkButton>
       </div>
 
@@ -239,7 +252,7 @@ export function Nav({
                 className="flex items-center gap-1 font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep"
               >
                 {social.label}
-                <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                <LinkIcon className="h-3 w-3" aria-hidden="true" />
               </Link>
             ) : (
               <a
