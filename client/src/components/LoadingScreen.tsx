@@ -1,25 +1,22 @@
 import { useEffect, useState, type CSSProperties } from "react";
+import { HalftoneReveal } from "./HalftoneReveal";
 
-const BAR_DURATION_MS = 2600;
-const IRIS_DURATION_MS = 650;
-const TOTAL_DEV_FRAMES = 12;
+const DURATION_MS = 2600;
+const EXIT_DURATION_MS = 1200;
 
-function pad3(n: number) {
-  return String(n).padStart(3, "0");
-}
+const IRIS_MASK =
+  "radial-gradient(circle at 50% 50%, transparent var(--iris-r), black calc(var(--iris-r) + 2px))";
 
 export function LoadingScreen({ onDone }: { onDone: () => void }) {
-  const [phase, setPhase] = useState<"developing" | "shutter">("developing");
-  const [irisOpen, setIrisOpen] = useState(false);
   const [percent, setPercent] = useState(0);
+  const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     if (reduced) {
-      setPercent(100);
-      setPhase("shutter");
-      setIrisOpen(true);
       onDone();
       return;
     }
@@ -27,113 +24,73 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
     let raf: number;
     const start = performance.now();
     const tick = (now: number) => {
-      const t = Math.min((now - start) / BAR_DURATION_MS, 1);
+      const t = Math.min((now - start) / DURATION_MS, 1);
       const eased = 1 - Math.pow(1 - t, 3);
       setPercent(Math.round(eased * 100));
       if (t < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
 
-    const shutterTimer = setTimeout(() => setPhase("shutter"), BAR_DURATION_MS);
-    const doneTimer = setTimeout(onDone, BAR_DURATION_MS + IRIS_DURATION_MS);
+    const exitTimer = setTimeout(() => setExiting(true), DURATION_MS);
+    const doneTimer = setTimeout(onDone, DURATION_MS + EXIT_DURATION_MS);
 
     return () => {
       cancelAnimationFrame(raf);
-      clearTimeout(shutterTimer);
+      clearTimeout(exitTimer);
       clearTimeout(doneTimer);
     };
   }, [onDone]);
 
-  // Two rAFs so the closed (0px) mask paints before the transition to the
-  // open state is triggered — otherwise React/CSS can coalesce them and the
-  // iris would just pop open instead of animating.
-  useEffect(() => {
-    if (phase !== "shutter" || irisOpen) return;
-    let inner = 0;
-    const outer = requestAnimationFrame(() => {
-      inner = requestAnimationFrame(() => setIrisOpen(true));
-    });
-    return () => {
-      cancelAnimationFrame(outer);
-      cancelAnimationFrame(inner);
-    };
-  }, [phase, irisOpen]);
-
-  if (phase === "shutter") {
-    const maskGradient =
-      "radial-gradient(circle at 50% 50%, transparent var(--iris-r), black calc(var(--iris-r) + 2px))";
-    return (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-paper"
-        style={
-          {
-            "--iris-r": irisOpen ? "100vmax" : "0px",
-            transition: `--iris-r ${IRIS_DURATION_MS}ms cubic-bezier(0.16, 1, 0.3, 1)`,
-            WebkitMaskImage: maskGradient,
-            maskImage: maskGradient,
-          } as CSSProperties
-        }
-      >
-        <span
-          className="absolute left-6 top-6 font-hud text-tag uppercase tracking-[0.08em] text-ink sm:left-10 sm:top-10"
-          aria-hidden="true"
-        >
-          Viewfinder
-        </span>
-        <svg width="200" height="200" viewBox="0 0 200 200" aria-hidden="true">
-          <g fill="none" className="stroke-ink" style={{ opacity: 0.18 }}>
-            <circle cx="100" cy="100" r="90" />
-            <circle cx="100" cy="100" r="60" />
-            <circle cx="100" cy="100" r="30" />
-          </g>
-          <circle cx="100" cy="100" r="4" className="fill-orange" />
-        </svg>
-      </div>
-    );
-  }
-
-  const currentFrame = Math.max(1, Math.ceil((percent / 100) * TOTAL_DEV_FRAMES));
-
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10 bg-ink">
-      <span
-        className="absolute left-6 top-6 font-hud text-tag uppercase tracking-[0.08em] text-paper sm:left-10 sm:top-10"
-        aria-hidden="true"
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-8 bg-paper"
+      style={
+        {
+          "--iris-r": exiting ? "100vmax" : "0px",
+          transition: `--iris-r ${EXIT_DURATION_MS}ms cubic-bezier(0.16, 1, 0.3, 1)`,
+          WebkitMaskImage: IRIS_MASK,
+          maskImage: IRIS_MASK,
+        } as CSSProperties
+      }
+    >
+      <div
+        // duration-[1200ms] here must match EXIT_DURATION_MS above —
+        // Tailwind needs the literal at build time, so it can't read the JS
+        // constant. Same easing curve as the iris mask so the zoom and the
+        // reveal read as one motion instead of two competing ones.
+        className={`relative w-full max-w-xl px-8 transition-transform ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          exiting ? "scale-[1.35] duration-[1200ms]" : "scale-100 duration-0"
+        }`}
+        style={{ aspectRatio: "1200 / 684" }}
       >
-        Viewfinder
+        <HalftoneReveal
+          src="/assets/asci.svg"
+          inkColor="#11100b"
+          paperColor="#f5f2ea"
+          mode="mono"
+          dotSize={1.15}
+          dotDensity={55}
+          angle={34}
+          contrast={1.35}
+          trigger="off"
+          // HalftoneReveal's "sharp" pass always applies a mouse-centered
+          // lens-bend + chromatic-aberration warp (right, for PhotoPanel's
+          // cursor loupe). There's no cursor here, so a huge revealRadius
+          // is the lever that flattens that warp to ~0 everywhere instead
+          // of touching the shared shader and risking the loupe elsewhere.
+          revealRadius={8}
+          idleReveal={percent / 100}
+          borderRadius="0px"
+          className="!absolute inset-0"
+        />
+      </div>
+      <span
+        className={`font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-opacity duration-500 ease-in ${
+          exiting ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        {percent}%
       </span>
-
-      <div style={{ perspective: "600px" }} aria-hidden="true">
-        <svg
-          width="120"
-          height="120"
-          viewBox="0 0 120 120"
-          className="motion-safe:animate-[camera-spin_7s_linear_infinite]"
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          <circle cx="60" cy="60" r="58" fill="none" className="stroke-teal" style={{ opacity: 0.5 }} />
-          <rect x="24" y="42" width="72" height="52" rx="6" fill="none" className="stroke-paper" strokeWidth="2" />
-          <rect x="46" y="30" width="28" height="14" rx="3" fill="none" className="stroke-paper" strokeWidth="2" />
-          <circle cx="60" cy="70" r="18" fill="none" className="stroke-orange" strokeWidth="2" />
-          <circle cx="60" cy="70" r="7" className="fill-orange" />
-          <circle cx="82" cy="50" r="3" className="fill-paper" />
-        </svg>
-      </div>
-
-      <div className="flex w-56 flex-col items-center gap-3" role="status">
-        <span className="font-hud text-tag uppercase tracking-[0.08em] text-ash">
-          Developing
-        </span>
-        <div className="h-[2px] w-full overflow-hidden bg-ash/25">
-          <div className="h-full bg-orange" style={{ width: `${percent}%` }} />
-        </div>
-        <div className="flex w-full justify-between">
-          <span className="font-hud text-tag tracking-[0.04em] text-ash">{percent}%</span>
-          <span className="font-hud text-tag tracking-[0.04em] text-ash">
-            FRAME {pad3(currentFrame)}/{pad3(TOTAL_DEV_FRAMES)}
-          </span>
-        </div>
-      </div>
     </div>
   );
 }

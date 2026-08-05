@@ -1,11 +1,24 @@
 import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { HomePage } from "./pages/HomePage";
 import { NotesInspiration } from "./pages/NotesInspiration";
+import { NotFound } from "./pages/NotFound";
 
 function App() {
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const [loadedPathname, setLoadedPathname] = useState(location.pathname);
+
+  // Re-arm the loading screen on every route change, not just first mount.
+  // Setting state directly in the render body (React's sanctioned way to
+  // sync state to a changed prop/value) rather than in an effect means the
+  // overlay is already showing in the same commit the new route's page
+  // mounts underneath it — no one-frame flash of the unstyled destination.
+  if (location.pathname !== loadedPathname) {
+    setLoadedPathname(location.pathname);
+    if (!loading) setLoading(true);
+  }
 
   return (
     <>
@@ -26,6 +39,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage loading={loading} />} />
         <Route path="/notes" element={<NotesInspiration />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

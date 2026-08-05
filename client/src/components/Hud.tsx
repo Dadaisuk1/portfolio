@@ -27,23 +27,6 @@ export function ScanLines() {
   );
 }
 
-export function CornerBrackets() {
-  const common = "absolute w-6 h-6 border-paper/80 sm:w-7 sm:h-7";
-  return (
-    <div
-      className="pointer-events-none absolute inset-3 sm:inset-5"
-      aria-hidden="true"
-    >
-      <span className={`${common} top-0 left-0 border-t-2 border-l-2`} />
-      <span className={`${common} top-0 right-0 border-t-2 border-r-2`} />
-      <span className={`${common} bottom-0 left-0 border-b-2 border-l-2`} />
-      <span className={`${common} bottom-0 right-0 border-b-2 border-r-2`} />
-    </div>
-  );
-}
-
-const REC_BLINK = "motion-safe:animate-[rec-pulse_1.2s_steps(1)_infinite]";
-
 export function RecDot({
   className = "",
   tone = "dark",
@@ -51,57 +34,21 @@ export function RecDot({
 }: {
   className?: string;
   tone?: "dark" | "light";
-  size?: "tag" | "hud";
+  size?: "tag" | "hud" | "lg";
 }) {
   const textTone = tone === "light" ? "text-orange-deep" : "text-orange";
-  const dotSize = size === "hud" ? "h-2 w-2" : "h-1.5 w-1.5";
-  const textSize = size === "hud" ? "text-hud" : "text-tag";
+  const dotSize =
+    size === "lg" ? "h-2.5 w-2.5" : size === "hud" ? "h-2 w-2" : "h-1.5 w-1.5";
+  const textSize =
+    size === "lg" ? "text-hud-lg" : size === "hud" ? "text-hud" : "text-tag";
   return (
     <div className={`flex items-center gap-2 ${className}`} aria-hidden="true">
-      <span className={`${dotSize} rounded-full bg-orange ${REC_BLINK}`} />
+      <span className={`${dotSize} rounded-full bg-orange`} />
       <span
-        className={`font-hud ${textSize} tracking-[0.08em] uppercase ${REC_BLINK} ${textTone}`}
+        className={`font-hud ${textSize} tracking-[0.08em] uppercase ${textTone}`}
       >
         REC
       </span>
     </div>
-  );
-}
-
-function pad(n: number) {
-  return String(n).padStart(2, "0");
-}
-
-export function Timestamp({ className = "" }: { className?: string }) {
-  const d = new Date();
-  const stamp = `'${pad(d.getFullYear() % 100)} ${pad(d.getMonth() + 1)} ${pad(
-    d.getDate(),
-  )} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  return (
-    <span
-      className={`font-hud text-hud text-orange tracking-[0.04em] ${className}`}
-      aria-hidden="true"
-    >
-      {stamp}
-    </span>
-  );
-}
-
-export function FrameCounter({
-  current = 1,
-  total = 12,
-  className = "",
-}: {
-  current?: number;
-  total?: number;
-  className?: string;
-}) {
-  return (
-    <span
-      className={`font-hud text-hud text-ash tracking-[0.04em] ${className}`}
-      aria-hidden="true"
-    >
-      FRAME {pad(current)}/{pad(total)}
-    </span>
   );
 }

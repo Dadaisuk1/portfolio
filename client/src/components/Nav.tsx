@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { profile } from "../data/resume";
-import { RecDot } from "./Hud";
+// import { RecDot } from "./Hud";
 import { LinkButton } from "./Button";
 import { Spinner } from "./Spinner";
 import { scrollToTarget } from "../lib/smoothScroll";
@@ -14,7 +14,10 @@ import { Download } from "./icons/Download";
 const DOWNLOAD_FEEDBACK_MS = 700;
 
 // Ease-out on the way in (a confident, slightly slower arrival), ease-in on
-// the way out (quicker — an exit shouldn't make the visitor wait).
+// the way out (quicker — an exit shouldn't make the visitor wait). Nav now
+// floats as an overlay above a photo panel that never resizes, so this only
+// ever has to animate opacity/transform — no more syncing against a sibling's
+// width transition.
 const ENTER_TRANSITION = "duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
 const EXIT_TRANSITION = "duration-[220ms] ease-[cubic-bezier(0.4,0,1,1)]";
 
@@ -37,20 +40,20 @@ const roleWords = profile.role.split(" ");
 export function Nav({
   open = true,
   onExited,
-  onFrameHover,
   onCollapse,
   onOpenContact,
 }: {
   open?: boolean;
   onExited?: () => void;
-  onFrameHover?: (frame: number | null) => void;
   onCollapse?: () => void;
   onOpenContact?: () => void;
 }) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [entered, setEntered] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const headlineRef = useTextReveal<HTMLHeadingElement>();
+  const navListRef = useTextReveal<HTMLUListElement>();
   const closeRef = useMagnetic<HTMLButtonElement>(true);
 
   // Mount already in the closed pose, then flip to entered on the next
@@ -65,28 +68,104 @@ export function Nav({
     if (!open) setEntered(false);
   }, [open]);
 
+  // This is a full-viewport takeover, not an incidental popover — the page
+  // underneath shouldn't scroll or be reachable by keyboard while it's up.
+  // Locking only <html> (document.scrollingElement) isn't enough: once html
+  // can no longer scroll, the browser hands the scrollbar to <body> instead
+  // (it still has overflow content and an auto/visible overflow-y from the
+  // base styles), so the lock has to cover both to actually hold still.
+  useEffect(() => {
+    if (!open) return;
+    const html = document.documentElement;
+    const body = document.body;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = previousHtmlOverflow;
+      body.style.overflow = previousBodyOverflow;
+    };
+  }, [open]);
+
+  // Send focus into the panel the moment it opens — the button that
+  // triggered it (PhotoPanel's Menu button) goes inert as part of the same
+  // transition and would otherwise drop focus to <body>.
+  useEffect(() => {
+    if (!open) return;
+    closeRef.current?.focus();
+  }, [open]);
+
+  // Floating-overlay behavior: click outside the card or press Escape to
+  // close, matching ContactModal's existing pattern elsewhere in this app.
+  // Only wired up while open — the Menu button that reopens it is hidden
+  // (opacity-0 pointer-events-none) whenever Nav is open, so there's no
+  // trigger element to exclude here the way ContactModal has to. Tab is
+  // additionally trapped inside the panel so the background page — which
+  // stays in the DOM and un-inert below the fold — never picks up focus
+  // while this is meant to be the only thing on screen.
+  useEffect(() => {
+    if (!open) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onCollapse?.();
+        return;
+      }
+      if (e.key !== "Tab" || !rootRef.current) return;
+      const focusables = rootRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    const handleClickOutside = (e: MouseEvent) => {
+      if (rootRef.current?.contains(e.target as Node)) return;
+      onCollapse?.();
+    };
+    document.addEventListener("keydown", handleKey);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open, onCollapse]);
+
   return (
     <div
       ref={rootRef}
       inert={!open}
       onTransitionEnd={(e) => {
-        if (e.target === rootRef.current && e.propertyName === "opacity" && !open) {
+        if (
+          e.target === rootRef.current &&
+          e.propertyName === "opacity" &&
+          !open
+        ) {
           onExited?.();
         }
       }}
-      className={`paper-grain relative flex min-w-0 flex-col justify-center gap-10 bg-paper px-6 py-16 text-ink transition-[opacity,transform] split:min-h-screen split:flex-1 split:px-14 ${
+      className={`paper-grain !absolute inset-4 z-20 flex min-w-0 flex-col justify-center gap-6 overflow-y-hidden rounded-sm border border-ink/10 bg-paper px-6 py-10 text-ink shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)] transition-[opacity,transform] split:inset-y-6 split:right-10 split:left-auto split:w-[45%] split:px-14 split:py-12 ${
+        open ? "" : "pointer-events-none"
+      } ${
         entered
-          ? `translate-x-0 opacity-100 ${ENTER_TRANSITION}`
-          : `translate-x-4 opacity-0 ${EXIT_TRANSITION}`
+          ? `translate-x-0 scale-100 opacity-100 ${ENTER_TRANSITION}`
+          : `translate-x-3 scale-[0.98] opacity-0 ${EXIT_TRANSITION}`
       }`}
     >
       <button
         ref={closeRef}
         type="button"
         onClick={onCollapse}
-        className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-4 py-2.5 cursor-pointer transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
+        className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-5 py-3 cursor-pointer transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
       >
-        <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+        <svg width="12" height="12" viewBox="0 0 10 10" aria-hidden="true">
           <path
             d="M1 1 L9 9 M9 1 L1 9"
             fill="none"
@@ -94,15 +173,14 @@ export function Nav({
             strokeWidth="1.4"
           />
         </svg>
-        <span className="font-hud text-tag uppercase tracking-[0.08em]">
+        <span className="font-hud text-hud uppercase tracking-[0.08em]">
           Close
         </span>
       </button>
 
       <div>
         <div className="mb-4 flex items-center gap-4">
-          <RecDot tone="light" />
-          <span className="font-hud text-tag uppercase tracking-[0.08em] text-ink/70">
+          <span className="font-hud text-hud font-medium uppercase tracking-[0.08em] text-ink/80">
             Open to internships
           </span>
         </div>
@@ -122,41 +200,38 @@ export function Nav({
           ))}
         </h1>
         <p className="mt-6 max-w-md font-body text-body-lg text-ink/70">
-          {profile.name} — takes Figma to shipped, production React, end
-          to end. The result: a frontend hire who ships real features, not
-          prototypes.
+          {profile.name} — takes Figma to shipped, production React, end to end.
+          The result: a frontend hire who ships real features, not prototypes.
         </p>
       </div>
 
       <nav aria-label="Primary">
-        <ul className="flex flex-col gap-1">
-          {items.map((item) => {
+        <ul ref={navListRef} className="flex flex-col">
+          {items.map((item, index) => {
             const isRoute = item.href.startsWith("/");
+            const dimmed = hoveredIndex !== null && hoveredIndex !== index;
             const rowContent = (
-              <>
-                <span className="font-hud text-hud text-orange-deep">
-                  [{item.frame}]
-                </span>
-                <span
-                  className="font-display text-h3 text-ink group-hover:text-orange-deep group-focus-visible:text-orange-deep"
-                  style={{ fontWeight: 580 }}
-                >
-                  {item.label}
-                </span>
-              </>
+              <span
+                className={`font-display text-h3 tracking-tight transition-colors duration-300 ease-out group-hover:text-orange-deep group-focus-visible:text-orange-deep lg:text-h2 ${
+                  dimmed ? "text-ash-deep" : "text-ink"
+                }`}
+                style={{ fontWeight: 460 }}
+              >
+                {item.label}
+              </span>
             );
             const rowProps = {
               className:
-                "group flex items-center gap-4 py-4 cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep hover:text-orange-deep",
-              onMouseEnter: () => onFrameHover?.(Number(item.frame)),
-              onMouseLeave: () => onFrameHover?.(null),
-              onFocus: () => onFrameHover?.(Number(item.frame)),
-              onBlur: () => onFrameHover?.(null),
+                "group flex items-center py-5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep",
+              onMouseEnter: () => setHoveredIndex(index),
+              onMouseLeave: () => setHoveredIndex(null),
+              onFocus: () => setHoveredIndex(index),
+              onBlur: () => setHoveredIndex(null),
             };
             return (
               <li key={item.frame} className="border-b border-ash/25">
                 {isRoute ? (
-                  <Link to={item.href} {...rowProps}>
+                  <Link to={item.href} onClick={() => onCollapse?.()} {...rowProps}>
                     {rowContent}
                   </Link>
                 ) : (
@@ -164,6 +239,7 @@ export function Nav({
                     href={item.href}
                     onClick={(e) => {
                       e.preventDefault();
+                      onCollapse?.();
                       scrollToTarget(item.href);
                     }}
                     {...rowProps}
@@ -185,6 +261,7 @@ export function Nav({
           forceMagnetic
           onClick={(e) => {
             e.preventDefault();
+            onCollapse?.();
             scrollToTarget("#work");
           }}
         >

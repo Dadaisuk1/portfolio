@@ -30,6 +30,8 @@
   --text-body--line-height: 1.6;
   --text-hud: 1.05rem;
   --text-hud--line-height: 1.3;
+  --text-hud-lg: 1.4rem;
+  --text-hud-lg--line-height: 1.25;
   --text-tag: 0.72rem;
   --text-tag--line-height: 1.2;
 
@@ -54,8 +56,13 @@
   html {
     scroll-behavior: smooth;
     background: var(--color-ink);
-    overflow-x: hidden;
     overflow-anchor: none;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* legacy Edge/IE */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/WebKit */
   }
 
   body {
@@ -120,17 +127,6 @@
     background-blend-mode: lighten;
     mix-blend-mode: multiply;
     opacity: 0.9;
-  }
-}
-
-@keyframes rec-pulse {
-  0%,
-  49% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0.15;
   }
 }
 
