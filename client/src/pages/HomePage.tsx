@@ -11,7 +11,7 @@ import { Certifications } from "../sections/Certifications";
 import { Footer } from "../components/Footer";
 import { useSmoothScroll } from "../hooks/useSmoothScroll";
 
-const TOTAL_FRAMES = 5;
+const TOTAL_FRAMES = 4;
 
 export function HomePage({ loading }: { loading: boolean }) {
   const [hoveredFrame, setHoveredFrame] = useState<number | null>(null);

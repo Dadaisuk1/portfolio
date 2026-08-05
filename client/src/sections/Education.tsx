@@ -1,6 +1,7 @@
 import { education, languages } from "../data/resume";
 import { useDevelopReveal } from "../hooks/useDevelopReveal";
 import { ImageWithSkeleton } from "../components/ImageWithSkeleton";
+import { ArrowUpRight } from "../components/icons/ArrowUpRight";
 
 export function Education() {
   const ref = useDevelopReveal<HTMLElement>();
@@ -14,7 +15,7 @@ export function Education() {
         <div className="flex flex-col items-start justify-between gap-4 border-b border-ash/20 pb-7 sm:flex-row sm:items-baseline">
           <div className="flex flex-col gap-2">
             <span className="font-hud text-tag uppercase tracking-[0.08em] text-orange">
-              [04] Education
+              [03] Education
             </span>
             <h2
               className="font-display text-h2 text-paper"
@@ -49,9 +50,10 @@ export function Education() {
                 href={education.schoolUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="font-body text-body text-paper/70 underline-offset-2 transition-colors hover:text-paper hover:underline hover:decoration-orange"
+                className="flex items-center gap-1 font-body text-body text-paper/70 underline-offset-2 transition-colors hover:text-paper hover:underline hover:decoration-orange"
               >
                 {education.school}
+                <ArrowUpRight className="h-3 w-3 shrink-0" aria-hidden="true" />
               </a>
             </div>
             <p className="mt-1 font-hud text-tag text-ash">

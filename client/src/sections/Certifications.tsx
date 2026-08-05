@@ -3,6 +3,7 @@ import { useDevelopReveal } from "../hooks/useDevelopReveal";
 import { useMagnetic } from "../hooks/useMagnetic";
 import { Aws } from "../components/icons/Aws";
 import { Ibm } from "../components/icons/Ibm";
+import { ArrowUpRight } from "../components/icons/ArrowUpRight";
 import { ImageWithSkeleton } from "../components/ImageWithSkeleton";
 
 const CARD_MAGNETIC_OFFSET = 6;
@@ -36,10 +37,11 @@ function CredentialCard({ cert }: { cert: Certification }) {
       </div>
       <div className="flex flex-col gap-1">
         <p
-          className="font-body leading-snug text-ink underline-offset-2 group-hover:underline"
+          className="flex items-center gap-1 font-body leading-snug text-ink underline-offset-2 group-hover:underline"
           style={{ fontWeight: 580 }}
         >
-          {cert.name} <span aria-hidden="true">↗</span>
+          {cert.name}
+          <ArrowUpRight className="h-3 w-3 shrink-0" aria-hidden="true" />
         </p>
         <p className="font-hud text-tag uppercase tracking-[0.08em] text-ash-deep">
           {cert.type} · {cert.date}
@@ -60,7 +62,7 @@ export function Certifications() {
       <div className="mx-auto flex max-w-[1400px] flex-col gap-7">
         <div className="flex flex-col gap-2 border-b border-ink/12 pb-7">
           <span className="font-hud text-tag uppercase tracking-[0.08em] text-orange">
-            [05] Certifications &amp; Awards
+            [04] Certifications &amp; Awards
           </span>
           <h2 className="font-display text-h2 text-ink" style={{ fontWeight: 580 }}>
             Credentials
