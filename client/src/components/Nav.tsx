@@ -7,6 +7,9 @@ import { Spinner } from "./Spinner";
 import { scrollToTarget } from "../lib/smoothScroll";
 import { useTextReveal } from "../hooks/useTextReveal";
 import { useMagnetic } from "../hooks/useMagnetic";
+import { Linkedin, Github, Gmail } from "./icons/Social";
+import { LinkIcon } from "./icons/LinkIcon";
+import { Download } from "./icons/Download";
 
 const DOWNLOAD_FEEDBACK_MS = 700;
 
@@ -119,8 +122,9 @@ export function Nav({
           ))}
         </h1>
         <p className="mt-6 max-w-md font-body text-body-lg text-ink/70">
-          {profile.name} — building interfaces end-to-end, from Figma to
-          production React.
+          {profile.name} — takes Figma to shipped, production React, end
+          to end. The result: a frontend hire who ships real features, not
+          prototypes.
         </p>
       </div>
 
@@ -201,14 +205,26 @@ export function Nav({
             );
           }}
         >
-          {isDownloading ? (
-            <>
+          <span className="grid">
+            <span
+              aria-hidden={isDownloading}
+              className={`col-start-1 row-start-1 flex items-center gap-2 transition-opacity ${
+                isDownloading ? "opacity-0" : "opacity-100"
+              }`}
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              Download Resume
+            </span>
+            <span
+              aria-hidden={!isDownloading}
+              className={`col-start-1 row-start-1 flex items-center gap-2 transition-opacity ${
+                isDownloading ? "opacity-100" : "opacity-0"
+              }`}
+            >
               <Spinner />
               Downloading…
-            </>
-          ) : (
-            "Download Resume ↓"
-          )}
+            </span>
+          </span>
         </LinkButton>
       </div>
 
@@ -225,8 +241,9 @@ export function Nav({
               <button
                 type="button"
                 onClick={() => onOpenContact?.()}
-                className="font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep cursor-pointer"
+                className="flex items-center gap-1.5 font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep cursor-pointer"
               >
+                <Gmail className="h-3.5 w-auto" aria-hidden="true" />
                 {social.label}
               </button>
             ) : social.label === "Resources" ? (
@@ -235,15 +252,20 @@ export function Nav({
                 className="flex items-center gap-1 font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep"
               >
                 {social.label}
-                <span aria-hidden="true">↗</span>
+                <LinkIcon className="h-3 w-3" aria-hidden="true" />
               </Link>
             ) : (
               <a
                 href={social.href}
                 target="_blank"
                 rel="noreferrer"
-                className="font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep"
+                className="flex items-center gap-1.5 font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep"
               >
+                {social.label === "GitHub" ? (
+                  <Github className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <Linkedin className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
                 {social.label}
               </a>
             )}

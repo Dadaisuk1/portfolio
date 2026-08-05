@@ -1,5 +1,6 @@
 import { projects } from "../data/resume";
 import { useDevelopReveal } from "../hooks/useDevelopReveal";
+import { ArrowUpRight } from "../components/icons/ArrowUpRight";
 
 export function Work() {
   const ref = useDevelopReveal<HTMLElement>();
@@ -60,9 +61,10 @@ export function Work() {
                 href={project.url}
                 target="_blank"
                 rel="noreferrer"
-                className="font-hud text-tag uppercase tracking-[0.08em] text-ink transition-colors hover:text-orange-deep"
+                className="flex items-center gap-1 font-hud text-tag uppercase tracking-[0.08em] text-ink transition-colors hover:text-orange-deep"
               >
-                View ↗
+                View
+                <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
               </a>
             </div>
           </article>

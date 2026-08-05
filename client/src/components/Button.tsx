@@ -6,7 +6,7 @@ const base =
 
 const variants = {
   primary:
-    "bg-orange-deep border-orange-deep text-paper hover:bg-transparent hover:text-orange-deep",
+    "bg-orange border-orange text-ink hover:bg-transparent hover:text-orange-deep",
   ghost: "bg-transparent border-paper text-paper hover:bg-paper hover:text-ink",
   "ghost-dark":
     "bg-transparent border-ink text-ink hover:bg-ink hover:text-paper",

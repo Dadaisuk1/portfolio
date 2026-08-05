@@ -1,6 +1,7 @@
 import { profile } from "../data/resume";
 import { LinkButton } from "./Button";
 import { RecDot } from "./Hud";
+import { Linkedin, Github, Gmail } from "./icons/Social";
 import { useDevelopReveal } from "../hooks/useDevelopReveal";
 
 export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
@@ -39,6 +40,7 @@ export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
               onOpenContact?.();
             }}
           >
+            <Gmail className="h-4 w-auto" aria-hidden="true" />
             Email me
           </LinkButton>
           <LinkButton
@@ -48,6 +50,7 @@ export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
             target="_blank"
             rel="noreferrer"
           >
+            <Linkedin className="h-4 w-4" aria-hidden="true" />
             LinkedIn
           </LinkButton>
           <LinkButton
@@ -57,6 +60,7 @@ export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
             target="_blank"
             rel="noreferrer"
           >
+            <Github className="h-4 w-4" aria-hidden="true" />
             GitHub
           </LinkButton>
         </div>
