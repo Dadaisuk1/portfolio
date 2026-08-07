@@ -201,6 +201,7 @@ export function HalftoneReveal({
   follow = 0.99,
   idleReveal = 0,
   trigger = "hover",
+  paused = false,
   borderRadius = "16px",
   className = "",
   style,
@@ -220,6 +221,10 @@ export function HalftoneReveal({
   follow?: number;
   idleReveal?: number;
   trigger?: Trigger;
+  // Freezes the reveal on the idle print and ignores pointer movement —
+  // for when something else (e.g. a panel docked over the image) is the
+  // thing the cursor is actually headed toward.
+  paused?: boolean;
   borderRadius?: string;
   className?: string;
   style?: CSSProperties;
@@ -229,6 +234,7 @@ export function HalftoneReveal({
   const uniformsRef = useRef<Uniforms | null>(null);
   const rafRef = useRef<number | null>(null);
   const followRef = useRef(follow);
+  const pausedRef = useRef(paused);
   const mouseRef = useRef({
     x: 0.5,
     y: 0.5,
@@ -241,6 +247,11 @@ export function HalftoneReveal({
   useEffect(() => {
     followRef.current = follow;
   }, [follow]);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+    if (paused) mouseRef.current.target = 0;
+  }, [paused]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -318,6 +329,13 @@ export function HalftoneReveal({
     ro.observe(container);
 
     const onMove = (e: PointerEvent) => {
+      // Paused: leave sx/sy wherever they were rather than still chasing
+      // the raw pointer — otherwise the reveal fades out while sliding
+      // toward the latest mouse position instead of just dimming in place.
+      if (pausedRef.current) {
+        mouseRef.current.target = 0;
+        return;
+      }
       const rect = container.getBoundingClientRect();
       mouseRef.current.x = (e.clientX - rect.left) / rect.width;
       mouseRef.current.y = 1 - (e.clientY - rect.top) / rect.height;
