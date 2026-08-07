@@ -7,6 +7,7 @@ import { scrollToTarget } from "../lib/smoothScroll";
 import { useTextReveal } from "../hooks/useTextReveal";
 import { useMagnetic } from "../hooks/useMagnetic";
 import { useDismissOnOutsideOrEscape } from "../hooks/useDismissOnOutsideOrEscape";
+import { useIconLabelFlourish } from "../hooks/useIconLabelFlourish";
 import { Linkedin, Github, Gmail } from "./icons/Social";
 import { LinkIcon } from "./icons/LinkIcon";
 import { Download } from "./icons/Download";
@@ -55,6 +56,10 @@ export function Nav({
   const headlineRef = useTextReveal<HTMLHeadingElement>();
   const navListRef = useTextReveal<HTMLUListElement>();
   const closeRef = useMagnetic<HTMLButtonElement>(true);
+  const { iconRef: closeIconRef, labelRef: closeLabelRef } = useIconLabelFlourish<
+    SVGSVGElement,
+    HTMLSpanElement
+  >(entered);
 
   // Mount already in the closed pose, then flip to entered on the next
   // frame so the browser has a prior style to transition away from.
@@ -155,7 +160,13 @@ export function Nav({
         onClick={onCollapse}
         className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-5 py-3 cursor-pointer transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
       >
-        <svg width="12" height="12" viewBox="0 0 10 10" aria-hidden="true">
+        <svg
+          ref={closeIconRef}
+          width="12"
+          height="12"
+          viewBox="0 0 10 10"
+          aria-hidden="true"
+        >
           <path
             d="M1 1 L9 9 M9 1 L1 9"
             fill="none"
@@ -163,8 +174,13 @@ export function Nav({
             strokeWidth="1.4"
           />
         </svg>
-        <span className="font-hud text-hud uppercase tracking-[0.08em]">
-          Close
+        <span className="inline-block overflow-hidden">
+          <span
+            ref={closeLabelRef}
+            className="inline-block font-hud text-hud uppercase tracking-[0.08em]"
+          >
+            Close
+          </span>
         </span>
       </button>
 
@@ -201,18 +217,27 @@ export function Nav({
             const isRoute = item.href.startsWith("/");
             const dimmed = hoveredIndex !== null && hoveredIndex !== index;
             const rowContent = (
-              <span
-                className={`font-display text-h3 tracking-tight transition-colors duration-300 ease-out group-hover:text-orange-deep group-focus-visible:text-orange-deep lg:text-h2 ${
-                  dimmed ? "text-ash-deep" : "text-ink"
-                }`}
-                style={{ fontWeight: 460 }}
-              >
-                {item.label}
-              </span>
+              <>
+                <span
+                  className={`font-hud text-tag uppercase tracking-[0.08em] transition-colors duration-300 ease-out group-hover:text-orange-deep group-focus-visible:text-orange-deep ${
+                    dimmed ? "text-ash-deep" : "text-orange"
+                  }`}
+                >
+                  [{item.frame}]
+                </span>
+                <span
+                  className={`font-display text-h3 tracking-tight transition-colors duration-300 ease-out group-hover:text-orange-deep group-focus-visible:text-orange-deep lg:text-h2 ${
+                    dimmed ? "text-ash-deep" : "text-ink"
+                  }`}
+                  style={{ fontWeight: 460 }}
+                >
+                  {item.label}
+                </span>
+              </>
             );
             const rowProps = {
               className:
-                "group flex items-center py-5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep",
+                "group flex items-center gap-3 py-5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-deep",
               onMouseEnter: () => setHoveredIndex(index),
               onMouseLeave: () => setHoveredIndex(null),
               onFocus: () => setHoveredIndex(index),

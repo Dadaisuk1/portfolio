@@ -9,7 +9,8 @@ import { ImageWithSkeleton } from "../components/ImageWithSkeleton";
 const CARD_MAGNETIC_OFFSET = 6;
 
 function CredentialIcon({ icon }: { icon: Certification["icon"] }) {
-  if (icon === "aws") return <Aws className="h-7 w-auto text-ink" aria-hidden="true" />;
+  if (icon === "aws")
+    return <Aws className="h-7 w-auto text-ink" aria-hidden="true" />;
   if (icon === "ibm") return <Ibm className="h-6 w-auto" aria-hidden="true" />;
   return (
     <ImageWithSkeleton
@@ -63,12 +64,18 @@ export function Certifications() {
           <span className="font-hud text-tag uppercase tracking-[0.08em] text-orange">
             [04] Certifications &amp; Awards
           </span>
-          <h2 className="font-display text-h2 text-ink" style={{ fontWeight: 580 }}>
+          <h2
+            className="font-display text-h2 text-ink"
+            style={{ fontWeight: 580 }}
+          >
             Credentials
           </h2>
         </div>
 
-        <div ref={gridRef} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {certifications.map((cert) => (
             <CredentialCard key={cert.name} cert={cert} />
           ))}

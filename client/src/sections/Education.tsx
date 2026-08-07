@@ -23,9 +23,6 @@ export function Education() {
               Degrees &amp; Languages
             </h2>
           </div>
-          <p className="max-w-[340px] shrink-0 font-body text-body text-ash sm:text-right">
-            Formal education and language proficiency.
-          </p>
         </div>
         <div className="flex flex-col gap-8">
           <div>

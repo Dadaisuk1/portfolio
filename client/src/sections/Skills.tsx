@@ -15,16 +15,19 @@ export function Skills() {
             <span className="font-hud text-tag uppercase tracking-[0.08em] text-orange">
               [02] Tech Stack
             </span>
-            <h2 className="font-display text-h2 text-paper" style={{ fontWeight: 580 }}>
+            <h2
+              className="font-display text-h2 text-paper"
+              style={{ fontWeight: 580 }}
+            >
               Tools &amp; Technologies
             </h2>
           </div>
-          <p className="max-w-[340px] shrink-0 font-body text-body text-ash sm:text-right">
-            AWS-certified, adaptable across stacks, comfortable in Agile teams.
-          </p>
         </div>
 
-        <div ref={gridRef} className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+        <div
+          ref={gridRef}
+          className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5"
+        >
           {techStack.map((group) => (
             <div key={group.label} className="flex flex-col gap-4">
               <span className="font-hud text-tag font-medium uppercase tracking-[0.08em] text-orange">
@@ -34,7 +37,11 @@ export function Skills() {
                 {group.items.map((item) => {
                   const Icon = techIcons[item.icon];
                   return (
-                    <div key={item.name} data-reveal-item className="flex items-center gap-2.5">
+                    <div
+                      key={item.name}
+                      data-reveal-item
+                      className="flex items-center gap-2.5"
+                    >
                       <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
                       <span
                         className="font-display text-body text-paper"

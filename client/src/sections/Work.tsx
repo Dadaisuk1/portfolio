@@ -15,13 +15,13 @@ export function Work() {
             <span className="font-hud text-tag uppercase tracking-[0.08em] text-orange">
               [01] Featured Work
             </span>
-            <h2 className="font-display text-h2 text-ink" style={{ fontWeight: 580 }}>
+            <h2
+              className="font-display text-h2 text-ink"
+              style={{ fontWeight: 580 }}
+            >
               Selected Projects
             </h2>
           </div>
-          <p className="max-w-[340px] shrink-0 font-body text-body text-orange-muted sm:text-right">
-            Four shipped builds — from a solo capstone to 5-person team projects.
-          </p>
         </div>
 
         {projects.map((project) => (
@@ -30,7 +30,10 @@ export function Work() {
             className="flex flex-col gap-6 border-b border-ink/12 py-7 sm:flex-row sm:gap-8"
           >
             <div className="flex w-full shrink-0 flex-col gap-2 sm:w-[300px]">
-              <h3 className="font-display text-h3 text-ink" style={{ fontWeight: 580 }}>
+              <h3
+                className="font-display text-h3 text-ink"
+                style={{ fontWeight: 580 }}
+              >
                 {project.name}
               </h3>
               <p className="text-sm text-ash-deep">{project.tagline}</p>
