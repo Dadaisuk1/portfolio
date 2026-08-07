@@ -21,15 +21,6 @@ export function HomePage({ loading }: { loading: boolean }) {
   const heroRef = useRef<HTMLElement>(null);
   useSmoothScroll(!loading);
 
-  // Nav mounting/unmounting changes page height — keep GSAP's cached
-  // measurements in sync so scroll math doesn't go stale. Tied to
-  // navRendered (not heroExpanded) since that's when the DOM actually
-  // changes, i.e. once the exit transition has finished.
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
-    return () => cancelAnimationFrame(raf);
-  }, [navRendered]);
-
   const openNav = () => {
     setNavRendered(true);
     setHeroExpanded(true);
@@ -59,7 +50,6 @@ export function HomePage({ loading }: { loading: boolean }) {
               open={heroExpanded}
               onExited={() => setNavRendered(false)}
               onCollapse={closeNav}
-              onOpenContact={() => setContactModalOpen(true)}
             />
           )}
         </section>

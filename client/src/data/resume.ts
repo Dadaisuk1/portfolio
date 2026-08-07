@@ -9,6 +9,12 @@ export const profile = {
   bio: "4th-year IT student turning Figma files into production React — full-stack across React, Node.js, and Django, AWS-certified, and comfortable owning a project end to end.",
 };
 
+// Opens Gmail's web compose directly, prefilled with the recipient — an
+// escape hatch for visitors who'd rather not use the contact modal. Uses
+// the addressed `view=cm` deep link (not a numbered `/mail/u/0/` inbox URL)
+// so it works regardless of which Google account the visitor has open.
+export const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(profile.email)}`;
+
 export const techStack = [
   {
     label: "Frontend",

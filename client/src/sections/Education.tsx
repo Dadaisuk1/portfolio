@@ -4,6 +4,7 @@ import { ImageWithSkeleton } from "../components/ImageWithSkeleton";
 import { ArrowUpRight } from "../components/icons/ArrowUpRight";
 
 export function Education() {
+  const degreeRef = useScrollScaleReveal<HTMLDivElement>();
   const languagesRef = useScrollScaleReveal<HTMLDivElement>();
   return (
     <section
@@ -23,12 +24,9 @@ export function Education() {
               Degrees &amp; Languages
             </h2>
           </div>
-          <p className="max-w-[340px] shrink-0 font-body text-body text-ash sm:text-right">
-            Formal education and language proficiency.
-          </p>
         </div>
         <div className="flex flex-col gap-8">
-          <div>
+          <div ref={degreeRef}>
             <h3 className="mb-4 font-hud text-tag uppercase tracking-[0.08em] text-ash">
               Degree
             </h3>
