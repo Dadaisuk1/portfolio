@@ -1,24 +1,42 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
 import { profile } from "../data/resume";
 import { LinkButton } from "./Button";
 import { Spinner } from "./Spinner";
 import { scrollToTarget } from "../lib/smoothScroll";
 import { useMagnetic } from "../hooks/useMagnetic";
 import { useDismissOnOutsideOrEscape } from "../hooks/useDismissOnOutsideOrEscape";
+import { prefersReducedMotion } from "../lib/motion";
 import { Linkedin, Github, Gmail } from "./icons/Social";
 import { LinkIcon } from "./icons/LinkIcon";
 import { Download } from "./icons/Download";
+
+gsap.registerPlugin(useGSAP);
 
 const DOWNLOAD_FEEDBACK_MS = 700;
 
 // Ease-out on the way in (a confident, slightly slower arrival), ease-in on
 // the way out (quicker — an exit shouldn't make the visitor wait). Nav now
 // floats as an overlay above a photo panel that never resizes, so this only
-// ever has to animate opacity/transform — no more syncing against a sibling's
-// width transition.
+// ever has to animate opacity/box-shadow via CSS — the desktop dock's slide
+// is handed off to GSAP below.
 const ENTER_TRANSITION = "duration-[420ms] ease-[cubic-bezier(0.16,1,0.3,1)]";
 const EXIT_TRANSITION = "duration-[220ms] ease-[cubic-bezier(0.4,0,1,1)]";
+
+// Seconds — duplicated from ENTER_TRANSITION/EXIT_TRANSITION's 420ms/220ms
+// rather than derived, since Tailwind's class scanner needs those as literal
+// strings and can't see through a shared JS constant. Keep both in sync.
+const SLIDE_ENTER_DURATION = 0.42;
+const SLIDE_EXIT_DURATION = 0.22;
+// Purely decelerating — no overshoot. A spring ease (e.g. back.out) pulls
+// the docked edge past flush-right before settling back, which reads as a
+// gap flashing open at the panel's edge; this arrives smoothly with no gap.
+const SLIDE_EASE = "power3.out";
+// Mirrors --breakpoint-split (700px) in index.css — the point where the
+// panel switches from a full-screen fade to a right-docked slide.
+const DESKTOP_QUERY = "(min-width: 700px)";
 
 const items = [
   { frame: "01", label: "Featured Work", href: "#work" },
@@ -63,6 +81,129 @@ export function Nav({
 
   useEffect(() => {
     if (!open) setEntered(false);
+  }, [open]);
+
+  // Desktop-only slide, GSAP-driven so it can use a spring ease instead of
+  // a CSS cubic-bezier. Mobile never enters this matchMedia scope, so it
+  // stays untouched by GSAP and keeps the plain opacity fade above.
+  const isFirstSlideRun = useRef(true);
+  const openRef = useRef(open);
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
+
+  // Live tween/timeline handles, kept in refs (not React state) so a rapid
+  // re-toggle can kill whatever's in flight and continue from wherever the
+  // panel and item labels currently sit — the same pattern React Bits'
+  // StaggeredMenu uses. kill() stops a tween in place; it does NOT reset
+  // values back to their pre-tween state the way GSAP's context revert()
+  // does, which is what caused the "open never animates" bug fixed earlier.
+  const openTlRef = useRef<gsap.core.Timeline | null>(null);
+  const closeTweenRef = useRef<gsap.core.Tween | null>(null);
+
+  // Setup only — deliberately has no `dependencies`, so it runs once on
+  // mount and reverts only on unmount. useGSAP's dependency tracking
+  // reverts everything from the previous run before the next one starts,
+  // which would erase the panel's current position on every toggle. The
+  // matchMedia scope still buys automatic cleanup of the inline transform
+  // if the window is resized narrower than `split`, since mobile no longer
+  // has a CSS class to fall back on for this property.
+  useGSAP(
+    () => {
+      if (!rootRef.current) return;
+      gsap.matchMedia().add(DESKTOP_QUERY, () => {
+        const panel = rootRef.current;
+        if (!panel) return;
+        const itemEls = panel.querySelectorAll(".nav-item-label");
+        const frameEls = panel.querySelectorAll(".nav-item-frame");
+        gsap.set(panel, { xPercent: openRef.current ? 0 : 100 });
+        gsap.set(
+          itemEls,
+          openRef.current
+            ? { yPercent: 0, rotate: 0 }
+            : { yPercent: 140, rotate: 10 },
+        );
+        gsap.set(frameEls, { opacity: openRef.current ? 1 : 0 });
+      });
+    },
+    { scope: rootRef },
+  );
+
+  const playOpen = () => {
+    const panel = rootRef.current;
+    if (!panel) return;
+    closeTweenRef.current?.kill();
+    openTlRef.current?.kill();
+
+    const itemEls = panel.querySelectorAll(".nav-item-label");
+    const frameEls = panel.querySelectorAll(".nav-item-frame");
+    gsap.set(itemEls, { yPercent: 140, rotate: 10 });
+    gsap.set(frameEls, { opacity: 0 });
+
+    const tl = gsap.timeline();
+    tl.fromTo(
+      panel,
+      { xPercent: 100 },
+      { xPercent: 0, duration: SLIDE_ENTER_DURATION, ease: SLIDE_EASE },
+    );
+    if (itemEls.length) {
+      tl.to(
+        itemEls,
+        {
+          yPercent: 0,
+          rotate: 0,
+          duration: 0.7,
+          ease: "power4.out",
+          stagger: 0.08,
+        },
+        `-=${SLIDE_ENTER_DURATION * 0.6}`,
+      );
+    }
+    if (frameEls.length) {
+      tl.to(
+        frameEls,
+        { opacity: 1, duration: 0.4, ease: "power2.out", stagger: 0.08 },
+        "<",
+      );
+    }
+    openTlRef.current = tl;
+  };
+
+  const playClose = () => {
+    const panel = rootRef.current;
+    if (!panel) return;
+    openTlRef.current?.kill();
+    openTlRef.current = null;
+    closeTweenRef.current?.kill();
+
+    closeTweenRef.current = gsap.to(panel, {
+      xPercent: 100,
+      duration: SLIDE_EXIT_DURATION,
+      ease: SLIDE_EASE,
+      overwrite: "auto",
+      onComplete: () => {
+        const itemEls = panel.querySelectorAll(".nav-item-label");
+        const frameEls = panel.querySelectorAll(".nav-item-frame");
+        gsap.set(itemEls, { yPercent: 140, rotate: 10 });
+        gsap.set(frameEls, { opacity: 0 });
+        onExited?.();
+      },
+    });
+  };
+
+  // The actual per-toggle trigger, run imperatively outside useGSAP's
+  // revert cycle so playOpen/playClose continue from wherever the panel
+  // and items currently sit rather than from a freshly-reverted pose.
+  useEffect(() => {
+    if (!rootRef.current) return;
+    if (prefersReducedMotion()) return;
+    if (!window.matchMedia(DESKTOP_QUERY).matches) return;
+    if (isFirstSlideRun.current) {
+      isFirstSlideRun.current = false;
+      return;
+    }
+    if (open) playOpen();
+    else playClose();
   }, [open]);
 
   // This is a full-viewport takeover, not an incidental popover — the page
@@ -138,12 +279,12 @@ export function Nav({
           onExited?.();
         }
       }}
-      className={`paper-grain !absolute inset-0 z-20 flex min-w-0 flex-col justify-center gap-6 overflow-y-hidden bg-paper px-6 py-10 text-ink transition-opacity split:right-0 split:left-auto split:w-[45%] split:border-l split:border-ink/10 split:px-14 split:py-12 split:shadow-[-24px_0_60px_-20px_rgba(0,0,0,0.45)] ${
+      className={`paper-grain !absolute inset-0 z-20 flex min-w-0 flex-col justify-center gap-6 overflow-y-hidden bg-paper px-6 py-10 text-ink transition-[opacity,box-shadow] split:right-0 split:left-auto split:w-[45%] split:border-l split:border-ink/10 split:px-14 split:py-12 ${
         open ? "" : "pointer-events-none"
       } ${
         entered
-          ? `opacity-100 ${ENTER_TRANSITION}`
-          : `opacity-0 ${EXIT_TRANSITION}`
+          ? `opacity-100 split:opacity-100 split:shadow-[-24px_0_60px_-20px_rgba(0,0,0,0.45)] ${ENTER_TRANSITION}`
+          : `opacity-0 split:opacity-100 split:shadow-[-24px_0_60px_-20px_rgba(0,0,0,0)] ${EXIT_TRANSITION}`
       }`}
     >
       <button
@@ -199,19 +340,21 @@ export function Nav({
             const rowContent = (
               <>
                 <span
-                  className={`font-hud text-tag uppercase tracking-[0.08em] transition-colors duration-300 ease-out group-hover:text-orange-deep group-focus-visible:text-orange-deep ${
+                  className={`nav-item-frame font-hud text-tag uppercase tracking-[0.08em] transition-colors duration-300 ease-out group-hover:text-orange-deep group-focus-visible:text-orange-deep ${
                     dimmed ? "text-ash-deep" : "text-orange"
                   }`}
                 >
                   [{item.frame}]
                 </span>
-                <span
-                  className={`font-display text-h3 tracking-tight transition-colors duration-300 ease-out group-hover:text-orange-deep group-focus-visible:text-orange-deep lg:text-h2 ${
-                    dimmed ? "text-ash-deep" : "text-ink"
-                  }`}
-                  style={{ fontWeight: 460 }}
-                >
-                  {item.label}
+                <span className="inline-block overflow-hidden">
+                  <span
+                    className={`nav-item-label inline-block font-display text-h3 tracking-tight transition-colors duration-300 ease-out group-hover:text-orange-deep group-focus-visible:text-orange-deep lg:text-h2 ${
+                      dimmed ? "text-ash-deep" : "text-ink"
+                    }`}
+                    style={{ fontWeight: 460 }}
+                  >
+                    {item.label}
+                  </span>
                 </span>
               </>
             );
