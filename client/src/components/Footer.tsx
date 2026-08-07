@@ -1,17 +1,27 @@
 import { profile } from "../data/resume";
 import { LinkButton } from "./Button";
-import { RecDot } from "./Hud";
+import { DecryptedText } from "./DecryptedText";
 import { Linkedin, Github, Gmail } from "./icons/Social";
 
 export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
   return (
     <footer className="paper-grain relative isolate border-t border-ink/10 bg-paper px-6 py-16 text-ink sm:px-14 sm:py-24">
-
       <div className="mx-auto flex max-w-[1400px] flex-col gap-10">
         <div className="flex items-center gap-4">
-          <RecDot tone="light" />
-          <span className="font-hud text-tag uppercase tracking-[0.08em] text-ink/70">
-            Open to internships
+          <span className="flex items-center gap-2 font-hud text-hud font-medium uppercase tracking-[0.08em] text-orange-deep">
+            <span
+              className="h-1.5 w-1.5 shrink-0 rounded-full bg-orange"
+              aria-hidden="true"
+            />
+            <DecryptedText
+              text="Open to internships"
+              animateOn="view"
+              sequential
+              useOriginalCharsOnly
+              revealDirection="start"
+              speed={35}
+              encryptedClassName="text-ash-deep"
+            />
           </span>
         </div>
 

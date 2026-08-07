@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react";
 import { profile } from "../data/resume";
 import { LinkButton } from "./Button";
 import { Spinner } from "./Spinner";
+import { DecryptedText } from "./DecryptedText";
 import { scrollToTarget } from "../lib/smoothScroll";
 import { useMagnetic } from "../hooks/useMagnetic";
 import { useDismissOnOutsideOrEscape } from "../hooks/useDismissOnOutsideOrEscape";
@@ -308,8 +309,20 @@ export function Nav({
 
       <div>
         <div className="mb-4 flex items-center gap-4">
-          <span className="font-hud text-hud font-medium uppercase tracking-[0.08em] text-ink/80">
-            Open to internships
+          <span className="flex items-center gap-2 font-hud text-hud font-medium uppercase tracking-[0.08em] text-orange-deep">
+            <span
+              className="h-1.5 w-1.5 shrink-0 rounded-full bg-orange"
+              aria-hidden="true"
+            />
+            <DecryptedText
+              text="Open to internships"
+              animateOn="view"
+              sequential
+              useOriginalCharsOnly
+              revealDirection="start"
+              speed={35}
+              encryptedClassName="text-ash-deep"
+            />
           </span>
         </div>
         <h1
