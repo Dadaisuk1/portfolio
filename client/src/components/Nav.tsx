@@ -4,10 +4,8 @@ import { profile } from "../data/resume";
 import { LinkButton } from "./Button";
 import { Spinner } from "./Spinner";
 import { scrollToTarget } from "../lib/smoothScroll";
-import { useTextReveal } from "../hooks/useTextReveal";
 import { useMagnetic } from "../hooks/useMagnetic";
 import { useDismissOnOutsideOrEscape } from "../hooks/useDismissOnOutsideOrEscape";
-import { useIconLabelFlourish } from "../hooks/useIconLabelFlourish";
 import { Linkedin, Github, Gmail } from "./icons/Social";
 import { LinkIcon } from "./icons/LinkIcon";
 import { Download } from "./icons/Download";
@@ -53,13 +51,7 @@ export function Nav({
   const [entered, setEntered] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useTextReveal<HTMLHeadingElement>();
-  const navListRef = useTextReveal<HTMLUListElement>();
   const closeRef = useMagnetic<HTMLButtonElement>(true);
-  const { iconRef: closeIconRef, labelRef: closeLabelRef } = useIconLabelFlourish<
-    SVGSVGElement,
-    HTMLSpanElement
-  >(entered);
 
   // Mount already in the closed pose, then flip to entered on the next
   // frame so the browser has a prior style to transition away from.
@@ -146,12 +138,12 @@ export function Nav({
           onExited?.();
         }
       }}
-      className={`paper-grain !absolute inset-4 z-20 flex min-w-0 flex-col justify-center gap-6 overflow-y-hidden rounded-sm border border-ink/10 bg-paper px-6 py-10 text-ink shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)] transition-[opacity,transform] split:inset-y-6 split:right-10 split:left-auto split:w-[45%] split:px-14 split:py-12 ${
+      className={`paper-grain !absolute inset-0 z-20 flex min-w-0 flex-col justify-center gap-6 overflow-y-hidden bg-paper px-6 py-10 text-ink transition-opacity split:right-0 split:left-auto split:w-[45%] split:border-l split:border-ink/10 split:px-14 split:py-12 split:shadow-[-24px_0_60px_-20px_rgba(0,0,0,0.45)] ${
         open ? "" : "pointer-events-none"
       } ${
         entered
-          ? `translate-x-0 scale-100 opacity-100 ${ENTER_TRANSITION}`
-          : `translate-x-3 scale-[0.98] opacity-0 ${EXIT_TRANSITION}`
+          ? `opacity-100 ${ENTER_TRANSITION}`
+          : `opacity-0 ${EXIT_TRANSITION}`
       }`}
     >
       <button
@@ -160,13 +152,7 @@ export function Nav({
         onClick={onCollapse}
         className="absolute right-6 top-6 flex items-center gap-2 rounded-sm border border-ink px-5 py-3 cursor-pointer transition-colors hover:bg-ink hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-deep sm:right-8 sm:top-8"
       >
-        <svg
-          ref={closeIconRef}
-          width="12"
-          height="12"
-          viewBox="0 0 10 10"
-          aria-hidden="true"
-        >
+        <svg width="12" height="12" viewBox="0 0 10 10" aria-hidden="true">
           <path
             d="M1 1 L9 9 M9 1 L1 9"
             fill="none"
@@ -174,13 +160,8 @@ export function Nav({
             strokeWidth="1.4"
           />
         </svg>
-        <span className="inline-block overflow-hidden">
-          <span
-            ref={closeLabelRef}
-            className="inline-block font-hud text-hud uppercase tracking-[0.08em]"
-          >
-            Close
-          </span>
+        <span className="font-hud text-hud uppercase tracking-[0.08em]">
+          Close
         </span>
       </button>
 
@@ -191,7 +172,6 @@ export function Nav({
           </span>
         </div>
         <h1
-          ref={headlineRef}
           className="font-display italic text-hero text-ink"
           style={{ fontWeight: 340 }}
         >
@@ -212,7 +192,7 @@ export function Nav({
       </div>
 
       <nav aria-label="Primary">
-        <ul ref={navListRef} className="flex flex-col">
+        <ul className="flex flex-col">
           {items.map((item, index) => {
             const isRoute = item.href.startsWith("/");
             const dimmed = hoveredIndex !== null && hoveredIndex !== index;

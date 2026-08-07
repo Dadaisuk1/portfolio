@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { GrainFlicker } from "./GrainFlicker";
 import { HalftoneReveal } from "./HalftoneReveal";
 import { useMagnetic } from "../hooks/useMagnetic";
-import { useIconLabelFlourish } from "../hooks/useIconLabelFlourish";
 
 export function PhotoPanel({
   collapsed = false,
@@ -14,10 +13,6 @@ export function PhotoPanel({
   const [hovering, setHovering] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const expandRef = useMagnetic<HTMLButtonElement>(true);
-  const { iconRef: menuIconRef, labelRef: menuLabelRef } = useIconLabelFlourish<
-    SVGSVGElement,
-    HTMLSpanElement
-  >(collapsed);
 
   const trackPoint = (x: number, y: number) => {
     if (!ref.current) return;
@@ -109,13 +104,7 @@ export function PhotoPanel({
           collapsed ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
-        <svg
-          ref={menuIconRef}
-          width="16"
-          height="12"
-          viewBox="0 0 14 10"
-          aria-hidden="true"
-        >
+        <svg width="16" height="12" viewBox="0 0 14 10" aria-hidden="true">
           <path
             d="M0 1 H14 M0 5 H14 M0 9 H14"
             fill="none"
@@ -123,13 +112,8 @@ export function PhotoPanel({
             strokeWidth="1.4"
           />
         </svg>
-        <span className="inline-block overflow-hidden">
-          <span
-            ref={menuLabelRef}
-            className="inline-block font-hud text-hud uppercase tracking-[0.08em] text-paper"
-          >
-            Menu
-          </span>
+        <span className="font-hud text-hud uppercase tracking-[0.08em] text-paper">
+          Menu
         </span>
       </button>
     </div>
