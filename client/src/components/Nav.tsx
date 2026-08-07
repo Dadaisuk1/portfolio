@@ -1,4 +1,10 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -193,13 +199,24 @@ export function Nav({
   // The actual per-toggle trigger, run imperatively outside useGSAP's
   // revert cycle so playOpen/playClose continue from wherever the panel
   // and items currently sit rather than from a freshly-reverted pose.
-  useEffect(() => {
+  //
+  // HomePage unmounts Nav entirely once its exit transition finishes
+  // (navRendered), so a reopen mounts a brand-new instance with `open`
+  // already true — that's indistinguishable from "the very first mount"
+  // by isFirstSlideRun alone. Only skip the mount-triggered run when it's
+  // mounting closed (the useGSAP matchMedia setup above already placed it
+  // in that pose, nothing to animate); a mount that's already open still
+  // needs playOpen() so the reopen gets its entrance animation. useLayoutEffect
+  // keeps this in the same paint as useGSAP's own layout effect above, so
+  // the open-on-mount case never flashes the fully-open pose before
+  // playOpen() resets items back to hidden and animates them in.
+  useLayoutEffect(() => {
     if (!rootRef.current) return;
     if (prefersReducedMotion()) return;
     if (!window.matchMedia(DESKTOP_QUERY).matches) return;
     if (isFirstSlideRun.current) {
       isFirstSlideRun.current = false;
-      return;
+      if (!open) return;
     }
     if (open) playOpen();
     else playClose();
