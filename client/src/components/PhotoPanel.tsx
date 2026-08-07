@@ -76,6 +76,7 @@ export function PhotoPanel({
         edge={0.72}
         follow={0.18}
         idleReveal={0}
+        paused={!collapsed}
         borderRadius="0px"
         className="!absolute inset-0"
         style={{ contain: "layout paint" }}
