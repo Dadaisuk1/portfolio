@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { profile } from "../data/resume";
+import { profile, gmailComposeUrl } from "../data/resume";
 import { LinkButton } from "./Button";
 import { Spinner } from "./Spinner";
 import { DecryptedText } from "./DecryptedText";
@@ -49,7 +49,7 @@ const items = [
 const socials = [
   { label: "GitHub", href: profile.github },
   { label: "LinkedIn", href: profile.linkedin },
-  { label: "Email", href: "#" },
+  { label: "Email", href: gmailComposeUrl },
   { label: "Resources", href: "/notes" },
 ];
 
@@ -59,12 +59,10 @@ export function Nav({
   open = true,
   onExited,
   onCollapse,
-  onOpenContact,
 }: {
   open?: boolean;
   onExited?: () => void;
   onCollapse?: () => void;
-  onOpenContact?: () => void;
 }) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [entered, setEntered] = useState(false);
@@ -469,16 +467,7 @@ export function Nav({
                 aria-hidden="true"
               />
             )}
-            {social.label === "Email" ? (
-              <button
-                type="button"
-                onClick={() => onOpenContact?.()}
-                className="flex items-center gap-1.5 font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep cursor-pointer"
-              >
-                <Gmail className="h-3.5 w-auto" aria-hidden="true" />
-                {social.label}
-              </button>
-            ) : social.label === "Resources" ? (
+            {social.label === "Resources" ? (
               <Link
                 to={social.href}
                 className="flex items-center gap-1 font-hud text-tag uppercase tracking-[0.08em] text-ash-deep transition-colors hover:text-orange-deep"
@@ -495,8 +484,10 @@ export function Nav({
               >
                 {social.label === "GitHub" ? (
                   <Github className="h-3.5 w-3.5" aria-hidden="true" />
-                ) : (
+                ) : social.label === "LinkedIn" ? (
                   <Linkedin className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <Gmail className="h-3.5 w-auto" aria-hidden="true" />
                 )}
                 {social.label}
               </a>

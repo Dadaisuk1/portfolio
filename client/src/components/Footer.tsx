@@ -1,7 +1,8 @@
-import { profile } from "../data/resume";
+import { profile, gmailComposeUrl } from "../data/resume";
 import { LinkButton } from "./Button";
 import { DecryptedText } from "./DecryptedText";
 import { Linkedin, Github, Gmail } from "./icons/Social";
+import { ArrowUpRight } from "./icons/ArrowUpRight";
 
 export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
   return (
@@ -36,39 +37,50 @@ export function Footer({ onOpenContact }: { onOpenContact?: () => void } = {}) {
           {profile.bio}
         </p>
 
-        <div className="flex flex-wrap gap-4">
-          <LinkButton
-            href="#"
-            variant="primary"
-            magnetic
-            onClick={(e) => {
-              e.preventDefault();
-              onOpenContact?.();
-            }}
-          >
-            <Gmail className="h-4 w-auto" aria-hidden="true" />
-            Email me
-          </LinkButton>
-          <LinkButton
-            href={profile.linkedin}
-            variant="ghost-dark"
-            magnetic
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap gap-4">
+            <LinkButton
+              href="#"
+              variant="primary"
+              magnetic
+              onClick={(e) => {
+                e.preventDefault();
+                onOpenContact?.();
+              }}
+            >
+              <Gmail className="h-4 w-auto" aria-hidden="true" />
+              Email me
+            </LinkButton>
+            <LinkButton
+              href={profile.linkedin}
+              variant="ghost-dark"
+              magnetic
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Linkedin className="h-4 w-4" aria-hidden="true" />
+              LinkedIn
+            </LinkButton>
+            <LinkButton
+              href={profile.github}
+              variant="ghost-dark"
+              magnetic
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Github className="h-4 w-4" aria-hidden="true" />
+              GitHub
+            </LinkButton>
+          </div>
+          <a
+            href={gmailComposeUrl}
             target="_blank"
             rel="noreferrer"
+            className="flex w-fit items-center gap-1.5 font-hud text-tag text-ash-deep transition-colors hover:text-orange-deep"
           >
-            <Linkedin className="h-4 w-4" aria-hidden="true" />
-            LinkedIn
-          </LinkButton>
-          <LinkButton
-            href={profile.github}
-            variant="ghost-dark"
-            magnetic
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Github className="h-4 w-4" aria-hidden="true" />
-            GitHub
-          </LinkButton>
+            or email {profile.email} directly
+            <ArrowUpRight className="h-3 w-3 shrink-0" aria-hidden="true" />
+          </a>
         </div>
 
         <div className="mt-10 flex flex-col gap-1 border-t border-ash/25 pt-6 font-hud text-tag text-ink/70">

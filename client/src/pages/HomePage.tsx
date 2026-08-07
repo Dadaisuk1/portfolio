@@ -50,7 +50,6 @@ export function HomePage({ loading }: { loading: boolean }) {
               open={heroExpanded}
               onExited={() => setNavRendered(false)}
               onCollapse={closeNav}
-              onOpenContact={() => setContactModalOpen(true)}
             />
           )}
         </section>
